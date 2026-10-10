@@ -43,16 +43,17 @@ label, legend { font-size: 12px; font-weight: 500; }
 label:not(.mode-option):not(.checkbox-row):not(.section-label) { display: grid; gap: 8px; }
 h1, h2, p { margin: 0; }
 h2 { font-size: 26px; letter-spacing: -.5px; font-weight: 600; }
-.app-header { flex-shrink: 0; height: 48px; padding: 8px var(--content-inset); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.app-header { position: relative; z-index: 5; flex-shrink: 0; height: 48px; padding: 8px var(--content-inset); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 7px; }
-.header-actions { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.header-actions { position: relative; display: flex; align-items: center; gap: 6px; min-width: 0; }
 .brand-mark { display: block; width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
 h1 { font-size: 16px; font-weight: 600; letter-spacing: .5px; }
-.copy-link { display: inline-flex; align-items: center; justify-content: center; min-width: 84px; min-height: 28px; padding: 4px 6px; border: 1px solid transparent; border-radius: 3px; background: transparent; color: var(--muted); font-size: 11px; white-space: nowrap; }
-.copy-link.icon-only { width: 28px; min-width: 0; height: 28px; padding: 0; border-radius: 7px; }
-.copy-link svg { width: 16px; height: 16px; }
-.copy-link:hover:not(:disabled), .copy-link[data-state="copied"] { color: var(--green); background: var(--green-tint); }
-.copy-link[data-state="error"], .copy-link[data-state="error"]:hover:not(:disabled) { color: var(--danger); background: #f9ede8; }
+.export-menu { position: absolute; top: 36px; right: 0; z-index: 20; width: 168px; padding: 5px; border: 1px solid var(--green); border-radius: 2px; background: var(--surface); box-shadow: 0 8px 24px #27312b1c; }
+.export-option { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 36px; padding: 7px 8px; border: 0; border-radius: 2px; background: transparent; color: var(--ink); font-size: 12px; text-align: left; }
+.export-option svg { width: 17px; height: 17px; color: var(--muted); }
+.export-option:hover:not(:disabled), .export-option:focus-visible { background: var(--green-tint); color: var(--ink); }
+.export-option:hover:not(:disabled) svg, .export-option:focus-visible svg { color: var(--green); }
+.export-option:disabled { color: var(--muted); opacity: .45; }
 .icon-button { border: 0; background: transparent; color: var(--muted); width: 28px; height: 28px; display: inline-grid; place-items: center; border-radius: 7px; padding: 0; }
 .icon-button:hover { color: var(--green); background: var(--green-tint); }
 .icon-button.small { width: 26px; height: 26px; }

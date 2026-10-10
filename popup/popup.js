@@ -3,14 +3,14 @@ import { mountAbout } from '../src/about.js';
 import { exportMarkdownFile, exportZipFile } from '../src/export.js';
 
 const ids = [
-  'closePanelButton', 'backToClipButton', 'panelTitle', 'aboutContent', 'copyLinkButton', 'copyLinkIcon', 'copyLinkText', 'copyFeedback',
+  'closePanelButton', 'backToClipButton', 'panelTitle', 'aboutContent', 'exportMenuButton', 'exportMenu', 'exportMarkdownOption', 'exportZipOption',
   'connectionStatus', 'loadingPanel', 'connectionPanel',
   'loginPanel', 'loginForm', 'accessCode', 'showCode', 'remember', 'loginButton',
   'clipPanel', 'aboutPanel', 'aboutButton', 'clipFooter', 'clipForm', 'topicSelect', 'refreshTopics', 'newTopicToggle', 'newTopicField',
   'newTopicName', 'selectionMode', 'modeHint', 'pageTitle', 'pageSource',
   'pageStats', 'siteInitial', 'tagNames', 'tagInput', 'tagChips', 'tagCount', 'tagFeedback', 'tagSuggestions',
   'topicTrigger', 'topicLabel', 'topicMenu', 'topicSearch', 'topicOptions', 'topicEmpty',
-  'pagePreview', 'clipModes', 'clipButton', 'exportMarkdownButton', 'exportZipButton', 'logoutButton', 'successPanel', 'successMessage', 'successTopic',
+  'pagePreview', 'clipModes', 'clipButton', 'logoutButton', 'successPanel', 'successMessage', 'successTopic',
   'openArticleButton', 'clipAnotherButton', 'errorPanel', 'errorMessage', 'retryButton',
 ];
 const elements = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
@@ -67,8 +67,6 @@ let tags = [];
 let chosenTags = [];
 let topicIndex = 0;
 const MAX_TAGS = 3;
-let copying = false;
-let copyTimer;
 let clipScrollPosition = 0;
 const clipTypes = ['article', 'full_page', 'simplified', 'selection', 'bookmark', 'screenshot'];
 
@@ -81,9 +79,8 @@ async function worker(type, values = {}) {
 function showPanel(panel) {
   screen = panel;
   const clipScreen = screen === 'clipPanel';
-  elements.exportMarkdownButton.hidden = !clipScreen;
-  elements.exportZipButton.hidden = !clipScreen;
-  updateCopyButton();
+  closeExportMenu(false);
+  elements.exportMenuButton.hidden = !clipScreen;
   elements.clipFooter.hidden = panel !== 'clipPanel';
   elements.backToClipButton.hidden = panel !== 'aboutPanel';
   elements.panelTitle.textContent = panel === 'aboutPanel' ? '关于拾页' : '拾页';
@@ -117,69 +114,25 @@ function setConnection(text, state = '') {
   elements.connectionStatus.classList.toggle('error', state === 'error');
 }
 
-function updateCopyButton() {
-  elements.copyLinkButton.hidden = screen !== 'clipPanel';
-  elements.copyLinkButton.disabled = copying || !pageData?.url;
-  if (screen !== 'clipPanel' || !pageData?.url) {
-    clearTimeout(copyTimer);
-    setCopyFeedback('');
-  }
-  const label = elements.copyFeedback.textContent || '复制原文链接';
-  elements.copyLinkButton.title = pageData?.url ? `${label}\n${pageData.url}` : '正在读取原文链接';
+function closeExportMenu(focusTrigger = true) {
+  if (elements.exportMenu.hidden) return;
+  elements.exportMenu.hidden = true;
+  elements.exportMenuButton.setAttribute('aria-expanded', 'false');
+  if (focusTrigger) elements.exportMenuButton.focus({ preventScroll: true });
 }
 
-function setCopyFeedback(state) {
-  elements.copyLinkButton.dataset.state = state;
-  elements.copyLinkText.textContent = copying ? '复制中…' : state === 'copied' ? '已复制' : state === 'error' ? '重试复制' : '复制链接';
-  elements.copyLinkIcon.setAttribute('href', state === 'copied' ? '#i-check' : '#i-copy');
-  const message = state === 'copied' ? '已复制原文链接' : state === 'error' ? '链接未能复制，请点击重试。' : '';
-  elements.copyFeedback.textContent = message;
-  elements.copyLinkButton.setAttribute('aria-label', message || '复制原文链接');
+function openExportMenu() {
+  if (!elements.exportMenu.hidden) {
+    closeExportMenu();
+    return;
+  }
+  if (elements.exportMenuButton.disabled) return;
+  elements.exportMenu.hidden = false;
+  elements.exportMenuButton.setAttribute('aria-expanded', 'true');
+  const firstOption = elements.exportMarkdownOption.disabled ? elements.exportZipOption : elements.exportMarkdownOption;
+  firstOption.focus({ preventScroll: true });
+  motion(elements.exportMenu, [{ opacity: 0, transform: 'translateY(-5px)' }, { opacity: 1, transform: 'translateY(0)' }], 180);
 }
-
-function copyWithSelection(url) {
-  const previous = document.activeElement;
-  const selection = typeof previous?.selectionStart === 'number'
-    ? [previous.selectionStart, previous.selectionEnd] : null;
-  const input = document.createElement('textarea');
-  input.value = url; input.readOnly = true;
-  input.style.cssText = 'position:fixed;left:-9999px;top:0;';
-  document.body.append(input);
-  try {
-    input.select();
-    return document.execCommand('copy');
-  } finally {
-    input.remove(); previous?.focus({ preventScroll: true });
-    if (selection) previous.setSelectionRange(...selection);
-  }
-}
-
-elements.copyLinkButton.addEventListener('click', async () => {
-  const url = pageData?.url;
-  if (!url || copying) return;
-  const previousFocus = document.activeElement;
-  clearTimeout(copyTimer);
-  copying = true; setCopyFeedback(''); updateCopyButton();
-  let copied = false;
-  try {
-    if (navigator.clipboard?.writeText) {
-      try { await navigator.clipboard.writeText(url); copied = true; }
-      catch { copied = copyWithSelection(url); }
-    } else copied = copyWithSelection(url);
-  } catch { copied = false; }
-  finally { copying = false; }
-  if (screen === 'clipPanel' && pageData?.url === url) {
-    setCopyFeedback(copied ? 'copied' : 'error');
-    if (copied) {
-      motion(elements.copyLinkButton.querySelector('svg'), [{ transform: 'scale(.8)' }, { transform: 'scale(1)' }], 180);
-      copyTimer = setTimeout(() => { setCopyFeedback(''); updateCopyButton(); }, 1800);
-    }
-  }
-  updateCopyButton();
-  if (previousFocus === elements.copyLinkButton && screen === 'clipPanel' && document.activeElement === document.body) {
-    elements.copyLinkButton.focus({ preventScroll: true });
-  }
-});
 
 function readableError(error) {
   if (error.status === 429 || /http_429|too many requests/i.test(error.message)) return '尝试次数过多，请稍等一分钟再试。';
@@ -215,19 +168,15 @@ function updateSaveButton() {
   const contentReady = !contentLoading && Boolean(pageData);
   const operationBusy = busy || pendingSave || exporting;
   elements.clipButton.disabled = operationBusy || !contentReady || !sessionChecked || !topicsReady;
-  const clipScreen = screen === 'clipPanel';
-  elements.exportMarkdownButton.hidden = !clipScreen;
-  elements.exportZipButton.hidden = !clipScreen;
-  elements.exportMarkdownButton.disabled = operationBusy || !contentReady;
-  elements.exportZipButton.disabled = operationBusy || !contentReady;
-  elements.exportMarkdownButton.title = exporting ? '正在导出 MD…' : '导出 MD';
-  elements.exportZipButton.title = exporting ? '正在导出 ZIP…' : '导出 ZIP 压缩包';
+  elements.exportMenuButton.disabled = operationBusy || !contentReady;
+  elements.exportMarkdownOption.disabled = operationBusy || !contentReady;
+  elements.exportZipOption.disabled = operationBusy || !contentReady;
+  elements.exportMenuButton.title = exporting ? '正在导出…' : '导出';
   elements.logoutButton.disabled = busy || pendingSave;
   elements.aboutButton.disabled = busy || pendingSave;
   elements.refreshTopics.disabled = busy || pendingSave;
   elements.topicTrigger.disabled = busy || pendingSave || !topicsReady;
   updateLoginButton();
-  updateCopyButton();
   elements.pagePreview.classList.toggle('is-saving', pendingSave);
 }
 
@@ -688,7 +637,7 @@ function exportDocument() {
 }
 
 async function exportCurrent(kind) {
-  if (elements.exportMarkdownButton.disabled || elements.exportZipButton.disabled) return;
+  if (elements.exportMenuButton.disabled) return;
   clearError();
   let documentToExport;
   try { documentToExport = exportDocument(); }
@@ -841,8 +790,21 @@ elements.clipForm.addEventListener('submit', async (event) => {
   }
 });
 
-elements.exportMarkdownButton.addEventListener('click', () => exportCurrent('markdown'));
-elements.exportZipButton.addEventListener('click', () => exportCurrent('zip'));
+elements.exportMenuButton.addEventListener('click', openExportMenu);
+elements.exportMarkdownOption.addEventListener('click', () => { closeExportMenu(false); exportCurrent('markdown'); });
+elements.exportZipOption.addEventListener('click', () => { closeExportMenu(false); exportCurrent('zip'); });
+elements.exportMenu.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') { event.preventDefault(); closeExportMenu(); }
+  if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    (document.activeElement === elements.exportMarkdownOption ? elements.exportZipOption : elements.exportMarkdownOption).focus();
+  }
+  if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    (document.activeElement === elements.exportZipOption ? elements.exportMarkdownOption : elements.exportZipOption).focus();
+  }
+  if (event.key === 'Tab') closeExportMenu(false);
+});
 
 document.querySelectorAll('input[name="clipType"]').forEach((input) => {
   input.addEventListener('change', async () => {
@@ -869,9 +831,10 @@ elements.topicMenu.addEventListener('keydown', (event) => {
 });
 document.addEventListener('pointerdown', (event) => {
   if (!elements.topicMenu.hidden && !elements.topicMenu.contains(event.target) && !elements.topicTrigger.contains(event.target)) closeTopicMenu(false);
+  if (!elements.exportMenu.hidden && !elements.exportMenu.contains(event.target) && !elements.exportMenuButton.contains(event.target)) closeExportMenu(false);
 });
-document.querySelector('main').addEventListener('scroll', () => closeTopicMenu(false));
-window.addEventListener('resize', () => closeTopicMenu(false));
+document.querySelector('main').addEventListener('scroll', () => { closeTopicMenu(false); closeExportMenu(false); });
+window.addEventListener('resize', () => { closeTopicMenu(false); closeExportMenu(false); });
 elements.tagInput.addEventListener('input', (event) => {
   if (!event.isComposing && /[,，\n]/.test(elements.tagInput.value)) commitTagInput();
   renderTagSuggestions(); persistInputs();
@@ -911,6 +874,11 @@ elements.logoutButton.addEventListener('click', async () => {
 });
 
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !elements.exportMenu.hidden) {
+    event.preventDefault();
+    closeExportMenu();
+    return;
+  }
   if (screen === 'aboutPanel' && event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
     event.preventDefault();
     return;

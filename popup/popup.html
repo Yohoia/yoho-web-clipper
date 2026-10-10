@@ -25,7 +25,7 @@
         <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 4h8l10 10-8 8L3 12z"/><circle cx="7" cy="8" r="1"/></symbol>
         <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
         <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></symbol>
-        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><path d="M9 8h11v13H9zM15 8V3H4v13h5"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></symbol><symbol id="i-export" viewBox="0 0 24 24"><path d="M12 3v10"/><path d="m7 8 5-5 5 5"/><path d="M5 15v4h14v-4"/></symbol>
         <symbol id="i-md" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 16v-4l1.5 2L13 12v4"/><path d="M16 12v4"/></symbol>
         <symbol id="i-zip" viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4-8-4Z"/><path d="M4 8v8l8 4 8-4V8"/><path d="M12 12v8"/></symbol>
         <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
@@ -33,7 +33,7 @@
     </svg>
     <header class="app-header">
       <div class="brand"><button id="backToClipButton" class="icon-button" type="button" aria-label="返回剪藏" title="返回剪藏" hidden><svg aria-hidden="true"><use href="#i-arrow"/></svg></button><img class="brand-mark" src="../icons/icon-128.png" width="40" height="40" alt="" /><h1 id="panelTitle">拾页</h1></div>
-      <div class="header-actions"><p id="connectionStatus" class="sr-only" role="status"></p><button id="copyLinkButton" class="copy-link icon-only" type="button" disabled hidden aria-label="复制原文链接" title="复制原文链接"><svg aria-hidden="true"><use id="copyLinkIcon" href="#i-copy"/></svg><span id="copyLinkText" class="sr-only">复制链接</span></button><button id="exportMarkdownButton" class="icon-button export-button" type="button" disabled hidden aria-label="导出 MD" title="导出 MD"><svg aria-hidden="true"><use href="#i-md"/></svg></button><button id="exportZipButton" class="icon-button export-button" type="button" disabled hidden aria-label="导出 ZIP 压缩包" title="导出 ZIP 压缩包"><svg aria-hidden="true"><use href="#i-zip"/></svg></button><span id="copyFeedback" class="sr-only" role="status"></span><button id="closePanelButton" class="icon-button" type="button" aria-label="关闭拾页" title="关闭拾页（Esc）" hidden><svg><use href="#i-close"/></svg></button></div>
+      <div class="header-actions"><p id="connectionStatus" class="sr-only" role="status"></p><button id="exportMenuButton" class="icon-button export-trigger" type="button" disabled hidden aria-haspopup="menu" aria-expanded="false" aria-label="导出" title="导出"><svg aria-hidden="true"><use href="#i-export"/></svg></button><div id="exportMenu" class="export-menu" role="menu" aria-label="选择导出格式" hidden><button id="exportMarkdownOption" class="export-option" type="button" role="menuitem" disabled><svg aria-hidden="true"><use href="#i-md"/></svg><span>导出为 MD</span></button><button id="exportZipOption" class="export-option" type="button" role="menuitem" disabled><svg aria-hidden="true"><use href="#i-zip"/></svg><span>导出为压缩包</span></button></div><button id="closePanelButton" class="icon-button" type="button" aria-label="关闭拾页" title="关闭拾页（Esc）" hidden><svg><use href="#i-close"/></svg></button></div>
     </header>
 
     <main>

@@ -97,6 +97,10 @@ const profile = await mkdtemp(resolve(tmpdir(), 'yoho-clipper-test-'));
 let context;
 const wait = async (page, predicate) => page.waitForFunction(predicate, null, { timeout: 15_000 });
 const visiblePanel = async (page, id) => wait(page, () => true).then(() => page.locator(`#${id}`).waitFor({ state: 'visible', timeout: 15_000 }));
+const expectExportMenu = async (page, visible) => {
+  await page.locator('#exportMenu').waitFor({ state: visible ? 'visible' : 'hidden', timeout: 3_000 });
+  assert.equal(await page.locator('#exportMenuButton').getAttribute('aria-expanded'), String(visible));
+};
 const enterCode = async (page, value, index = 0) => {
   await page.locator('.code-digit').nth(index).evaluate((input, text) => {
     const clipboardData = new DataTransfer();
@@ -189,7 +193,7 @@ try {
   await popup.locator('#loginButton').click();
   await popup.locator('#errorMessage').filter({ hasText: '访问码不正确' }).waitFor();
   assert.equal(await popup.locator('#loginPanel').isVisible(), true);
-  assert.equal(await popup.locator('#copyLinkButton').isVisible(), false);
+  assert.equal(await popup.locator('#exportMenuButton').isVisible(), false);
   assert.equal(await popup.locator('#codeDigit1').inputValue(), '');
   assert.equal(await popup.evaluate(() => document.activeElement.id), 'codeDigit1');
   assert.equal(await popup.locator('#loginButton').isDisabled(), true);
@@ -209,7 +213,7 @@ try {
   assert.equal(context.pages().length, pagesBeforeAbout);
   assert.equal(popup.url(), popupAddress);
   assert.equal(await popup.locator('#backToClipButton').isVisible(), true);
-  assert.equal(await popup.locator('#copyLinkButton').isVisible(), false);
+  assert.equal(await popup.locator('#exportMenuButton').isVisible(), false);
   assert.equal(await popup.locator('#clipFooter').isVisible(), false);
   assert.equal(await popup.locator('#aboutPanel #version').textContent(), manifest.version);
   await popup.locator('#backToClipButton').click();
@@ -276,43 +280,27 @@ try {
     const modes = document.querySelector('.mode-field').getBoundingClientRect();
     return title.bottom < action.top && action.bottom < modes.top;
   }), true);
-  await popup.evaluate(() => {
-    window.__copyFails = false; window.__fallbackSucceeds = false;
-    Object.defineProperty(navigator.clipboard, 'writeText', { configurable: true, value: async (text) => {
-      if (window.__copyFails) throw new Error('platform denied'); window.__copiedText = text;
-    } });
-    document.execCommand = () => {
-      window.__fallbackText = document.activeElement.value;
-      return window.__fallbackSucceeds;
-    };
-  });
-  await popup.locator('#copyLinkButton').click();
-  await popup.locator('#copyLinkText').filter({ hasText: '已复制' }).waitFor();
-  assert.equal(await popup.evaluate(() => window.__copiedText), fixtureUrl);
-  await popup.evaluate(() => { window.__copyFails = true; });
-  await popup.locator('#copyLinkButton').click();
-  await popup.locator('#copyLinkText').filter({ hasText: '重试复制' }).waitFor();
-  assert.equal(await popup.locator('textarea').count(), 0);
-  await popup.evaluate(() => { window.__fallbackSucceeds = true; });
-  await popup.locator('#copyLinkButton').click();
-  await popup.locator('#copyLinkText').filter({ hasText: '已复制' }).waitFor();
-  assert.equal(await popup.evaluate(() => window.__fallbackText), fixtureUrl);
-  assert.equal(await popup.evaluate(() => document.activeElement.id), 'copyLinkButton');
-  const headerButtons = await popup.evaluate(() => {
-    const header = document.querySelector('.app-header').getBoundingClientRect();
-    const ids = ['copyLinkButton', 'exportMarkdownButton', 'exportZipButton'];
-    return ids.map((id) => {
-      const box = document.getElementById(id).getBoundingClientRect();
-      return { id, x: box.x, y: box.y, width: box.width, height: box.height, insideHeader: box.top >= header.top && box.bottom <= header.bottom };
-    });
-  });
-  assert.equal(await popup.locator('.export-actions').count(), 0);
-  assert.equal(await popup.locator('#copyLinkText').evaluate((label) => label.classList.contains('sr-only') && label.getBoundingClientRect().width <= 1), true);
-  assert.deepEqual(headerButtons.map((button) => button.id), ['copyLinkButton', 'exportMarkdownButton', 'exportZipButton']);
-  assert.ok(headerButtons.every((button) => button.insideHeader && button.width === 28 && button.height === 28));
-  assert.ok(headerButtons.slice(1).every((button, index) => button.x > headerButtons[index].x && Math.abs(button.y - headerButtons[index].y) < .5));
-  console.log('PASS: link and local-export actions share the compact header icon row');
-  console.log('PASS: action placement, full source-link copy, denied-copy retry and fallback cleanup (platform clipboard mocked)');
+  assert.equal(await popup.locator('#copyLinkButton, #copyLinkText, #copyFeedback').count(), 0);
+  const exportTrigger = await popup.locator('#exportMenuButton').boundingBox();
+  const exportHeader = await popup.locator('.app-header').boundingBox();
+  assert.equal(await popup.locator('#exportMenuButton').isDisabled(), false);
+  assert.equal(await popup.locator('#exportMenuButton').getAttribute('aria-haspopup'), 'menu');
+  assert.ok(exportTrigger.y >= exportHeader.y - 1 && exportTrigger.y + exportTrigger.height <= exportHeader.y + exportHeader.height + 1);
+  assert.equal(exportTrigger.width, 28);
+  assert.equal(exportTrigger.height, 28);
+  await popup.locator('#exportMenuButton').click();
+  await expectExportMenu(popup, true);
+  assert.deepEqual(await popup.locator('.export-option').allTextContents(), ['导出为 MD', '导出为压缩包']);
+  await popup.keyboard.press('Escape');
+  await expectExportMenu(popup, false);
+  assert.equal(await popup.evaluate(() => document.activeElement.id), 'exportMenuButton');
+  await popup.locator('#exportMenuButton').click();
+  await expectExportMenu(popup, true);
+  await popup.keyboard.press('ArrowDown');
+  assert.equal(await popup.evaluate(() => document.activeElement.id), 'exportZipOption');
+  await popup.locator('#pageTitle').click();
+  await expectExportMenu(popup, false);
+  console.log('PASS: a single header export icon opens a keyboard-accessible format menu');
 
   await popup.locator('#newTopicToggle').click();
   await assertPopupSize(popup);
@@ -458,8 +446,9 @@ try {
   console.log('PASS: failure keeps inputs, reopening restores draft, successful save persists and opens correct URL');
   await popup.locator('#clipAnotherButton').click();
   await wait(popup, () => !document.getElementById('clipButton').disabled);
-  assert.equal(await popup.locator('#exportMarkdownButton').isDisabled(), false);
-  assert.equal(await popup.locator('#exportZipButton').isDisabled(), false);
+  assert.equal(await popup.locator('#exportMenuButton').isDisabled(), false);
+  assert.equal(await popup.locator('#exportMarkdownOption').isDisabled(), false);
+  assert.equal(await popup.locator('#exportZipOption').isDisabled(), false);
   await popup.evaluate(() => {
     globalThis.__exportDownloads = [];
     chrome.downloads.download = async (options) => {
@@ -492,9 +481,12 @@ try {
       return globalThis.__exportDownloads.length;
     };
   });
-  await popup.locator('#exportMarkdownButton').click();
+  await popup.locator('#exportMenuButton').click();
+  await popup.locator('#exportMarkdownOption').click();
   await popup.waitForFunction(() => globalThis.__exportDownloads?.length === 1);
-  await popup.locator('#exportZipButton').click();
+  await expectExportMenu(popup, false);
+  await popup.locator('#exportMenuButton').click();
+  await popup.locator('#exportZipOption').click();
   await popup.waitForFunction(() => globalThis.__exportDownloads?.length === 2);
   const exports = await popup.evaluate(() => globalThis.__exportDownloads);
   assert.match(exports[0].filename, /^A thoughtful reading workflow.md$/);
@@ -635,8 +627,8 @@ try {
   await visiblePanel(panel, 'clipPanel');
   await wait(panel, () => !document.getElementById('clipButton').disabled);
   assert.equal(await panel.locator('#pageUrl').count(), 0);
-  assert.ok((await panel.locator('#copyLinkButton').getAttribute('title')).includes(fixtureUrl));
-  assert.equal(await source.locator('#shiye-clipper-panel iframe').getAttribute('allow'), 'clipboard-write');
+  assert.equal(await panel.locator('#exportMenuButton').isDisabled(), false);
+  assert.equal(await source.locator('#shiye-clipper-panel iframe').getAttribute('allow'), null);
   assert.ok((await extract('article')).includes('function example'));
   assert.equal(await panel.locator('#contentPreview').count(), 0);
   assert.ok((await panel.locator('#clipButton').boundingBox()).y + 36 < 1100 - 24);
@@ -843,9 +835,8 @@ try {
   assert.deepEqual(await aboutSource.locator('#shiye-clipper-panel').boundingBox(), outerBeforeAbout);
   assert.equal(await aboutFrame.locator('#aboutPanel #version').textContent(), manifest.version);
   assert.equal(await aboutFrame.evaluate(() => document.activeElement.id), 'backToClipButton');
-  assert.equal(await aboutFrame.locator('#copyLinkButton').isVisible(), false);
-  assert.equal(await aboutFrame.locator('#exportMarkdownButton').isVisible(), false);
-  assert.equal(await aboutFrame.locator('#exportZipButton').isVisible(), false);
+  assert.equal(await aboutFrame.locator('#exportMenuButton').isVisible(), false);
+  assert.equal(await aboutFrame.locator('#exportMenu').isVisible(), false);
   assert.equal(await aboutFrame.locator('#aboutPanel .clip-kind').count(), 6);
   const articlesBeforeAboutShortcut = articles.length;
   await aboutSource.keyboard.press('Control+Enter');
@@ -859,7 +850,7 @@ try {
   await visiblePanel(aboutFrame, 'clipPanel');
   assert.deepEqual(await readClip(), clipBeforeAbout);
   assert.equal(await aboutFrame.evaluate(() => document.activeElement.id), 'aboutButton');
-  assert.equal(await aboutFrame.locator('#copyLinkButton').isVisible(), true);
+  assert.equal(await aboutFrame.locator('#exportMenuButton').isVisible(), true);
   await aboutFrame.locator('#aboutButton').click();
   await visiblePanel(aboutFrame, 'aboutPanel');
   await aboutSource.keyboard.press('Escape');

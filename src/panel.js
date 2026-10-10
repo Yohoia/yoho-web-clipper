@@ -36,7 +36,6 @@
     const iframe = document.createElement('iframe');
     iframe.src = chrome.runtime.getURL('popup/popup.html?surface=panel');
     iframe.title = '拾页 PageHush Clipper';
-    iframe.allow = 'clipboard-write';
     iframe.style.cssText = 'display:block;width:100%;height:100%;border:0;background:#f7f6f1;color-scheme:light;';
     shadow.append(iframe);
     document.documentElement.append(host);
