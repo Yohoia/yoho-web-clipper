@@ -14,8 +14,14 @@
 
 ## 快速开始
 
+<p align="left">
+  <a href="https://github.com/Yohoia/yoho-web-clipper/releases/latest/download/shiye-chrome-extension.zip"><strong>下载最新版扩展包</strong></a>
+</p>
+
+下载后解压 `shiye-chrome-extension.zip`，再按以下步骤加载：
+
 1. 在 Chrome 打开 `chrome://extensions/`，开启「开发者模式」。
-2. 点击「加载已解压的扩展程序」，选择本仓库目录。
+2. 点击「加载已解压的扩展程序」，选择解压后的 `shiye-chrome-extension` 目录。
 3. 打开任意普通网页，点击工具栏中的「拾页」，右侧会打开剪藏面板。
 4. 首次使用时，在六个格子中输入页息的 **6 位访问码**。输入会自动跳转，支持退格、左右方向键和完整粘贴。
 5. 按需修改标题、分类与标签，选择剪藏方式。
@@ -146,3 +152,4 @@ node tests/preview-server.mjs
 | 纵向剪藏方式 | [docs/vertical-modes-design.md](docs/vertical-modes-design.md) |
 | 交互与设置 | [docs/interaction-design.md](docs/interaction-design.md) · [docs/settings-design.md](docs/settings-design.md) |
 | 实现与验证 | [docs/implementation.md](docs/implementation.md) |
+| 发布扩展包 | [docs/release.md](docs/release.md) |
