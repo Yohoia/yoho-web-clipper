@@ -1,0 +1,44 @@
+[
+  {
+    "file": "clip-1280x900.png",
+    "state": "clip",
+    "size": "1280x900",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "login-1280x900.png",
+    "state": "login",
+    "size": "1280x900",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "success-1280x900.png",
+    "state": "success",
+    "size": "1280x900",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "clip-900x640.png",
+    "state": "clip",
+    "size": "900x640",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "login-900x640.png",
+    "state": "login",
+    "size": "900x640",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "success-900x640.png",
+    "state": "success",
+    "size": "900x640",
+    "zoom": 1,
+    "issues": []
+  }
+]

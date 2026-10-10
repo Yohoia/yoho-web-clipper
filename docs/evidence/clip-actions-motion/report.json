@@ -1,0 +1,147 @@
+[
+  {
+    "file": "motion-probe",
+    "state": null,
+    "size": "338x740",
+    "zoom": 1,
+    "motion": {
+      "load": {
+        "elements": 1,
+        "loops": 0,
+        "maxMove": 8,
+        "maxSize": 0,
+        "maxOpacity": 1,
+        "top": [
+          {
+            "el": "section#clipPanel.panel.clip-panel",
+            "move": 8,
+            "size": 0,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          }
+        ]
+      },
+      "steps": {
+        "elements": 12,
+        "loops": 0,
+        "maxMove": 473,
+        "maxSize": 1,
+        "maxOpacity": 1,
+        "top": [
+          {
+            "el": "svg",
+            "move": 473,
+            "size": 1,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "transition:transform",
+              "transition:opacity"
+            ]
+          },
+          {
+            "el": "svg",
+            "move": 378,
+            "size": 1,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "transition:transform",
+              "transition:opacity"
+            ]
+          },
+          {
+            "el": "span.mode-indicator",
+            "move": 233,
+            "size": 1,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform"
+            ]
+          },
+          {
+            "el": "svg",
+            "move": 223,
+            "size": 1,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "div#pagePreview.page-preview",
+            "move": 62,
+            "size": 1,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform",
+              "transition:box-shadow"
+            ]
+          },
+          {
+            "el": "svg",
+            "move": 45,
+            "size": 0.897,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "div.success-icon.saved-paper",
+            "move": 46,
+            "size": 0.268,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "span.spinner",
+            "move": 4,
+            "size": 0.26,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "css:spin"
+            ]
+          }
+        ]
+      },
+      "hero": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "layers": 0
+      },
+      "scroll": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "scrollable": false
+      }
+    },
+    "issues": []
+  },
+  {
+    "file": "motion-end.jpg",
+    "state": null,
+    "size": "338x740",
+    "zoom": 1,
+    "issues": []
+  }
+]

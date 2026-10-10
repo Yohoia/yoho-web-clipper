@@ -1,0 +1,6 @@
+PASS: baseline, initial 148px, all six modes, 336px width, full title preserved through save, isolated screenshot save
+PASS: icons, initial 89px, all six modes, 336px width, full title preserved through save, isolated screenshot save
+PASS: text, initial 85px, all six modes, 336px width, full title preserved through save, isolated screenshot save
+PASS: progressive, initial 84px, all six modes, 336px width, full title preserved through save, isolated screenshot save
+PASS: rail, initial 84px, all six modes, 336px width, full title preserved through save, isolated screenshot save
+ALL MODE OPTIONS PASSED (isolated preview; no production writes)

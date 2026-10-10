@@ -1,0 +1,58 @@
+[
+  {
+    "file": "clip-338x740.png",
+    "state": "clip",
+    "size": "338x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "login-338x740.png",
+    "state": "login",
+    "size": "338x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "empty-338x740.png",
+    "state": "empty",
+    "size": "338x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "save-error-338x740.png",
+    "state": "save-error",
+    "size": "338x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "clip-304x616.png",
+    "state": "clip",
+    "size": "304x616",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "login-304x616.png",
+    "state": "login",
+    "size": "304x616",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "empty-304x616.png",
+    "state": "empty",
+    "size": "304x616",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "save-error-304x616.png",
+    "state": "save-error",
+    "size": "304x616",
+    "zoom": 1,
+    "issues": []
+  }
+]

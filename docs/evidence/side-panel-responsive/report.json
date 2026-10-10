@@ -1,0 +1,30 @@
+[
+  {
+    "file": "login-900x640.png",
+    "state": "login",
+    "size": "900x640",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "clip-900x640.png",
+    "state": "clip",
+    "size": "900x640",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "login-360x740.png",
+    "state": "login",
+    "size": "360x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "clip-360x740.png",
+    "state": "clip",
+    "size": "360x740",
+    "zoom": 1,
+    "issues": []
+  }
+]

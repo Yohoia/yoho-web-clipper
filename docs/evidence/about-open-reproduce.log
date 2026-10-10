@@ -1,0 +1,62 @@
+PASS: syntax, manifest, online defaults, migration and URL validation
+PASS: about icon opens read-only product page, accurate version, product link, reload and unchanged storage
+PASS: compact vertical six-mode list, single checkmark and keyboard selection
+PASS: six-mode switches preserve layout and scroll across every async refresh frame
+PASS: action placement, full source-link copy, denied-copy retry and fallback cleanup (platform clipboard mocked)
+PASS: six-digit typing, paste, navigation, invalid-code reset, logo and stable 340x600 sizing
+PASS: extension loads, login gating, real worker authentication, topics and Markdown fidelity
+PASS: single-line title, ellipsis at rest and complete editable value
+PASS: custom picker search, keyboard, empty results; tag suggestions, chips, limits and draft restoration
+PASS: three-tag limit, pending/bulk-input save guard, preserved legacy drafts and worker validation
+PASS: failure keeps inputs, reopening restores draft, successful save persists and opens correct URL
+PASS: selection and bookmark save their extracted content
+PASS: topics failure preserves login and retries; empty topics create a default category
+PASS: closing popup while saving completes in worker and result restores on reopening
+PASS: concurrent saves cannot create duplicate drafts
+PASS: no connection settings, sliding clip selector, keyboard controls and reduced-motion fallback
+PASS: unauthorized session clears, remembered login persists, service switch revokes old session
+PASS: real webpage iframe opens about page and preserves clip input
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.check: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('input[name="clipType"][value="simplified"]')[22m
+[2m    - locator resolved to <input type="radio" name="clipType" value="simplified"/>[22m
+[2m  - attempting click action[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not visible[22m
+[2m    - retrying click action[22m
+[2m    - waiting 20ms[22m
+[2m    2 × waiting for element to be visible, enabled and stable[22m
+[2m      - element is not visible[22m
+[2m    - retrying click action[22m
+[2m      - waiting 100ms[22m
+[2m    58 × waiting for element to be visible, enabled and stable[22m
+[2m       - element is not visible[22m
+[2m     - retrying click action[22m
+[2m       - waiting 500ms[22m
+
+    at /Users/yohoia/Desktop/yoho-web-clipper/tests/check.mjs:575:68 {
+  log: [
+    `  - waiting for locator('input[name="clipType"][value="simplified"]')`,
+    '    - locator resolved to <input type="radio" name="clipType" value="simplified"/>',
+    '  - attempting click action',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not visible',
+    '    - retrying click action',
+    '    - waiting 20ms',
+    '    2 × waiting for element to be visible, enabled and stable',
+    '      - element is not visible',
+    '    - retrying click action',
+    '      - waiting 100ms',
+    '    58 × waiting for element to be visible, enabled and stable',
+    '       - element is not visible',
+    '     - retrying click action',
+    '       - waiting 500ms'
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.21.0

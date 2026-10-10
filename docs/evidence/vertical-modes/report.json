@@ -1,0 +1,30 @@
+[
+  {
+    "file": "clip-398x740.png",
+    "state": "clip",
+    "size": "398x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "save-error-398x740.png",
+    "state": "save-error",
+    "size": "398x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "clip-336x616.png",
+    "state": "clip",
+    "size": "336x616",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "save-error-336x616.png",
+    "state": "save-error",
+    "size": "336x616",
+    "zoom": 1,
+    "issues": []
+  }
+]

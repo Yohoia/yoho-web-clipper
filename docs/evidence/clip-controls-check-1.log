@@ -1,0 +1,14 @@
+PASS: syntax, manifest, online defaults, migration and URL validation
+PASS: six-digit typing, paste, navigation, invalid-code reset, logo and stable 400x600 sizing
+PASS: extension loads, login gating, real worker authentication, topics and Markdown fidelity
+PASS: custom picker search, keyboard, empty results; tag suggestions, chips, limits and draft restoration
+PASS: failure keeps inputs, reopening restores draft, successful save persists and opens correct URL
+PASS: selection and bookmark save their extracted content
+PASS: topics failure preserves login and retries; empty topics create a default category
+PASS: closing popup while saving completes in worker and result restores on reopening
+PASS: concurrent saves cannot create duplicate drafts
+PASS: no connection settings, sliding clip selector, keyboard controls and reduced-motion fallback
+PASS: unauthorized session clears, remembered login persists, service switch revokes old session
+PASS: whole page and text extraction, panel-free screenshot, multipart asset upload, failure recovery and source-tab checks
+PASS: toolbar panel, 12px margins, full-height resize, narrow viewport, source-tab binding, close/Escape/toggle and draft recovery
+ALL CHECKS PASSED (9 isolated mock drafts; no production writes)

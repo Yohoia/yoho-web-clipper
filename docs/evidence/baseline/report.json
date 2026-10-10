@@ -1,0 +1,18 @@
+[
+  {
+    "file": "login.png",
+    "state": "login",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": [
+      "加载错误：Failed to load resource: the server responded with a status of 404 (Not Found) http://127.0.0.1:4318/favicon.ico"
+    ]
+  },
+  {
+    "file": "clip.png",
+    "state": "clip",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  }
+]

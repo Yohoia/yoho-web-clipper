@@ -1,0 +1,16 @@
+[
+  {
+    "file": "login-@2x.png",
+    "state": "login",
+    "size": "400x600",
+    "zoom": 2,
+    "issues": []
+  },
+  {
+    "file": "clip-@2x.png",
+    "state": "clip",
+    "size": "400x600",
+    "zoom": 2,
+    "issues": []
+  }
+]

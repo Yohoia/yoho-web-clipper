@@ -1,0 +1,84 @@
+[
+  {
+    "file": "motion-probe",
+    "state": null,
+    "size": "398x874",
+    "zoom": 1,
+    "motion": {
+      "load": {
+        "elements": 1,
+        "loops": 0,
+        "maxMove": 8,
+        "maxSize": 0,
+        "maxOpacity": 1,
+        "top": [
+          {
+            "el": "section#clipPanel.panel.clip-panel",
+            "move": 8,
+            "size": 0,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          }
+        ]
+      },
+      "steps": {
+        "elements": 2,
+        "loops": 0,
+        "maxMove": 6,
+        "maxSize": 0.071,
+        "maxOpacity": 0.75,
+        "top": [
+          {
+            "el": "span.tag-chip",
+            "move": 6,
+            "size": 0.071,
+            "opacity": 0.75,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "span.tag-chip",
+            "move": 6,
+            "size": 0.071,
+            "opacity": 0.75,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          }
+        ]
+      },
+      "hero": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "layers": 0
+      },
+      "scroll": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "scrollable": false
+      }
+    },
+    "issues": []
+  },
+  {
+    "file": "motion-end.jpg",
+    "state": null,
+    "size": "398x874",
+    "zoom": 1,
+    "issues": []
+  }
+]

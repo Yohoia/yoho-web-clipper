@@ -1,0 +1,166 @@
+[
+  {
+    "file": "motion-probe",
+    "state": "icons",
+    "size": "398x740",
+    "zoom": 1,
+    "motion": {
+      "load": {
+        "elements": 3,
+        "loops": 0,
+        "maxMove": 8,
+        "maxSize": 0,
+        "maxOpacity": 1,
+        "top": [
+          {
+            "el": "section#clipPanel.panel.clip-panel",
+            "move": 8,
+            "size": 0,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "div#clipModes.clip-modes",
+            "move": 2,
+            "size": 0,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "js:style"
+            ]
+          },
+          {
+            "el": "span.mode-indicator",
+            "move": 1,
+            "size": 0,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform"
+            ]
+          }
+        ]
+      },
+      "steps": {
+        "elements": 6,
+        "loops": 0,
+        "maxMove": 233,
+        "maxSize": 1,
+        "maxOpacity": 1,
+        "top": [
+          {
+            "el": "span.mode-indicator",
+            "move": 233,
+            "size": 1,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform"
+            ]
+          },
+          {
+            "el": "div#pagePreview.page-preview",
+            "move": 78,
+            "size": 1,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform",
+              "transition:box-shadow"
+            ]
+          },
+          {
+            "el": "svg",
+            "move": 45,
+            "size": 0.897,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "div.success-icon.saved-paper",
+            "move": 46,
+            "size": 0.268,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "span.spinner",
+            "move": 4,
+            "size": 0.261,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "css:spin"
+            ]
+          },
+          {
+            "el": "section#successPanel.panel.success-panel",
+            "move": 8,
+            "size": 0,
+            "opacity": 0.55,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          }
+        ]
+      },
+      "hero": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "layers": 0
+      },
+      "scroll": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "scrollable": false
+      }
+    },
+    "issues": []
+  },
+  {
+    "file": "icons.png",
+    "state": "icons",
+    "size": "398x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "text.png",
+    "state": "text",
+    "size": "398x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "progressive.png",
+    "state": "progressive",
+    "size": "398x740",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "rail.png",
+    "state": "rail",
+    "size": "398x740",
+    "zoom": 1,
+    "issues": []
+  }
+]

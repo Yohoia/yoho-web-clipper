@@ -1,0 +1,97 @@
+[
+  {
+    "file": "motion-probe",
+    "state": null,
+    "size": "1280x900",
+    "zoom": 1,
+    "motion": {
+      "load": {
+        "elements": 1,
+        "loops": 0,
+        "maxMove": 15,
+        "maxSize": 0.053,
+        "maxOpacity": 1,
+        "top": [
+          {
+            "el": "div.seal",
+            "move": 15,
+            "size": 0.053,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          }
+        ]
+      },
+      "steps": {
+        "elements": 2,
+        "loops": 0,
+        "maxMove": 6,
+        "maxSize": 0.043,
+        "maxOpacity": 0,
+        "top": [
+          {
+            "el": "img#brandMark.logo",
+            "move": 6,
+            "size": 0.043,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform"
+            ]
+          },
+          {
+            "el": "svg",
+            "move": 4,
+            "size": 0,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform"
+            ]
+          }
+        ]
+      },
+      "hero": {
+        "elements": 1,
+        "loops": 0,
+        "maxMove": 87,
+        "maxSize": 0.029,
+        "maxOpacity": 0,
+        "top": [
+          {
+            "el": "img#brandMark.logo",
+            "move": 87,
+            "size": 0.029,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform"
+            ]
+          }
+        ],
+        "layers": 1
+      },
+      "scroll": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "scrollable": true
+      }
+    },
+    "issues": [
+      "滚动：没有检测到随滚动出现的变化；落地页、品牌页、发布页和展览页需要一段滚动叙事"
+    ]
+  },
+  {
+    "file": "page.png",
+    "state": null,
+    "size": "1280x900",
+    "zoom": 1,
+    "issues": []
+  }
+]

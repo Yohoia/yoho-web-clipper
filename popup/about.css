@@ -1,0 +1,35 @@
+/* The selected green binding, fitted to the existing clipper surface. */
+body[data-screen="aboutPanel"] { background:#27483e; }
+body[data-screen="aboutPanel"] .app-header { background:#27483e; color:#ecf0e6; border-color:#799589; }
+body[data-screen="aboutPanel"] .brand-mark { display:none; }
+body[data-screen="aboutPanel"] .icon-button { color:#c7d5c8; border-radius:0; }
+body[data-screen="aboutPanel"] .icon-button:hover { color:#ecf0e6; background:#35594d; }
+body[data-screen="aboutPanel"] .icon-button:focus-visible { outline-color:#e9eee5; }
+body[data-screen="aboutPanel"] main { padding:14px 16px 20px; scrollbar-color:#799589 #27483e; }
+body[data-screen="aboutPanel"] #errorPanel { display:none; }
+#backToClipButton svg { transform:rotate(180deg); }
+.about-panel .cover { --about-paper:#e9eee5; --about-muted:#c7d5c8; --about-line:#799589; position:relative; padding:20px; border:1px solid var(--about-line); background:#35594d; color:#ecf0e6; box-shadow:4px 4px 0 #173c31; font-family:"Avenir Next","Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif; line-height:1.7; text-align:center; }
+.about-panel .cover::before { content:""; position:absolute; left:7px; top:0; bottom:0; border-left:1px solid #79958977; pointer-events:none; }
+.about-panel .seal { width:62px; height:62px; padding:8px; background:var(--about-paper); margin:2px auto 18px; border-radius:2px; transform:rotate(-5deg); }
+.about-panel .logo { display:block; width:46px; height:46px; transition:transform 220ms var(--ease); }
+.about-panel .seal:hover .logo { transform:translateY(-4px) rotate(-3deg); }
+.about-panel .name { font-size:42px; font-weight:500; letter-spacing:.16em; text-indent:.16em; line-height:1.25; }
+.about-panel .subtitle { font-size:12px; letter-spacing:.055em; margin-top:7px; color:var(--about-muted); }
+.about-panel .motto { font-size:16px; letter-spacing:0; line-height:1.6; margin-top:18px; }
+.about-panel .product-link { display:inline-flex; gap:20px; align-items:center; padding:8px 22px; border:1px solid var(--about-paper); background:var(--about-paper); color:#2b4b3e; margin-top:18px; font-size:12px; text-decoration:none; transition:background 180ms,color 180ms,transform 180ms var(--ease); }
+.about-panel .product-link:hover { background:transparent; color:var(--about-paper); }
+.about-panel .product-link svg { width:17px; height:17px; transition:transform 180ms var(--ease); }
+.about-panel .product-link:hover svg { transform:translateX(4px); }
+.about-panel .product-link:active { transform:translateY(2px); }
+.about-panel .product-link:focus-visible { outline:2px solid var(--about-paper); outline-offset:4px; }
+.about-panel .service-address { margin-top:8px; font-size:11px; color:var(--about-muted); overflow-wrap:anywhere; }
+.about-panel .facts { display:grid; grid-template-columns:1fr 1fr; gap:14px 12px; margin:22px 0 0; padding-top:18px; border-top:1px solid var(--about-line); text-align:left; }
+.about-panel .facts > div { display:grid; gap:4px; }
+.about-panel .facts dt { font-size:11px; color:var(--about-muted); }
+.about-panel .facts dd { margin:0; font-size:12px; }
+.about-panel .info-section { border-top:1px solid var(--about-line); margin-top:20px; padding-top:16px; text-align:left; }
+.about-panel h2 { font-size:13px; font-weight:500; letter-spacing:0; }
+.about-panel .clip-kinds { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 10px; margin-top:14px; }
+.about-panel .clip-kind { display:flex; align-items:center; gap:8px; font-size:12px; white-space:nowrap; }
+.about-panel .clip-kind svg { width:16px; height:16px; color:var(--about-muted); stroke-width:1.5; }
+.about-panel .privacy p { font-size:12px; color:var(--about-muted); line-height:1.85; margin-top:8px; text-wrap:pretty; }

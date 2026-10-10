@@ -1,0 +1,24 @@
+[
+  {
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "sixModes": true,
+    "input": "native pointer clicks on visible labels; no scrollIntoView",
+    "frames": 6,
+    "maxGeometryOrScrollDeltaPx": 0,
+    "observations": "host bounds, source heading bounds, title/button/topic bounds, source and panel scroll positions"
+  },
+  {
+    "viewport": {
+      "width": 900,
+      "height": 640
+    },
+    "sixModes": true,
+    "input": "native pointer clicks on visible labels; no scrollIntoView",
+    "frames": 5,
+    "maxGeometryOrScrollDeltaPx": 0,
+    "observations": "host bounds, source heading bounds, title/button/topic bounds, source and panel scroll positions"
+  }
+]

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>拾页 PageHush Clipper · 页息</title>
+    <link rel="stylesheet" href="./popup.css" />
+    <link rel="stylesheet" href="./about.css" />
+  </head>
+  <body>
+    <svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <symbol id="i-mark" viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4V4Z"/><path d="M9 8h6M9 11h4"/></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+        <symbol id="i-article" viewBox="0 0 24 24"><path d="M5 3h14v18H5zM8 8h8M8 12h8M8 16h5"/></symbol>
+        <symbol id="i-selection" viewBox="0 0 24 24"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4M8 10h8M8 14h5"/></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 14 4-4m-6 6-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0" transform="translate(2 0)"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 8a8 8 0 1 0 0 8M20 3v5h-5"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="i-page" viewBox="0 0 24 24"><path d="M3 4h18v16H3zM3 8h18M7 12h10M7 16h6"/></symbol>
+        <symbol id="i-text" viewBox="0 0 24 24"><path d="M4 5h16M4 10h16M4 15h16M4 20h10"/></symbol>
+        <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="4"/></symbol>
+        <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 3h9v11H3zM3 6V4h7l2 2"/></symbol>
+        <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 4h8l10 10-8 8L3 12z"/><circle cx="7" cy="8" r="1"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10h.01"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><path d="M9 8h11v13H9zM15 8V3H4v13h5"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      </defs>
+    </svg>
+    <header class="app-header">
+      <div class="brand"><button id="backToClipButton" class="icon-button" type="button" aria-label="返回剪藏" title="返回剪藏" hidden><svg aria-hidden="true"><use href="#i-arrow"/></svg></button><img class="brand-mark" src="../icons/icon-128.png" width="40" height="40" alt="" /><h1 id="panelTitle">拾页</h1></div>
+      <div class="header-actions"><p id="connectionStatus" class="sr-only" role="status"></p><button id="copyLinkButton" class="copy-link" type="button" disabled hidden aria-label="复制原文链接" title="复制原文链接"><svg aria-hidden="true"><use id="copyLinkIcon" href="#i-copy"/></svg><span id="copyLinkText">复制链接</span></button><span id="copyFeedback" class="sr-only" role="status"></span><button id="closePanelButton" class="icon-button" type="button" aria-label="关闭拾页" title="关闭拾页（Esc）" hidden><svg><use href="#i-close"/></svg></button></div>
+    </header>
+
+    <main>
+      <section id="loadingPanel" class="panel loading-panel" aria-busy="true"><span class="spinner"></span><p>正在恢复剪藏工作台…</p></section>
+      <section id="connectionPanel" class="panel connection-panel" hidden><span class="success-icon"><svg><use href="#i-refresh"/></svg></span><h2>连接暂时中断</h2><p class="field-hint">登录已保留，恢复连接后继续剪藏。</p></section>
+
+      <section id="loginPanel" class="panel login-panel" hidden>
+        <div class="login-art" aria-hidden="true"><img src="../icons/icon-128.png" width="88" height="88" alt="" /></div>
+        <div class="login-heading"><h2>拾起灵感，<br />留住好文章。</h2></div>
+        <form id="loginForm">
+          <div class="field-heading code-heading"><label id="accessCodeLabel" for="codeDigit1">页息访问码</label><button id="showCode" class="icon-button" type="button" aria-label="显示访问码" aria-pressed="false"><svg><use href="#i-eye"/></svg></button></div>
+          <div id="accessCode" class="code-fields" role="group" aria-labelledby="accessCodeLabel">
+            <input id="codeDigit1" class="code-digit" type="password" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required aria-label="第 1 位，共 6 位" aria-describedby="codeHint" />
+            <input id="codeDigit2" class="code-digit" type="password" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required aria-label="第 2 位，共 6 位" aria-describedby="codeHint" />
+            <input id="codeDigit3" class="code-digit" type="password" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required aria-label="第 3 位，共 6 位" aria-describedby="codeHint" />
+            <input id="codeDigit4" class="code-digit" type="password" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required aria-label="第 4 位，共 6 位" aria-describedby="codeHint" />
+            <input id="codeDigit5" class="code-digit" type="password" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required aria-label="第 5 位，共 6 位" aria-describedby="codeHint" />
+            <input id="codeDigit6" class="code-digit" type="password" inputmode="numeric" pattern="[0-9]" maxlength="1" autocomplete="off" required aria-label="第 6 位，共 6 位" aria-describedby="codeHint" />
+          </div>
+          <p id="codeHint" class="field-hint">与页息使用同一个 6 位访问码</p>
+          <label class="checkbox-row"><input id="remember" type="checkbox" checked /><span>在此设备保持登录（最长 30 天）</span></label>
+          <button id="loginButton" class="primary-button" type="submit" disabled><span>登录页息</span><svg><use href="#i-arrow"/></svg></button>
+        </form>
+      </section>
+
+      <section id="clipPanel" class="panel clip-panel" hidden>
+        <div id="pagePreview" class="page-preview"><div class="source-line"><span class="site-initial" id="siteInitial">P</span><span id="pageSource">正在读取网页…</span><span id="pageStats" class="muted"></span></div><label for="pageTitle" class="sr-only">剪藏标题</label><input id="pageTitle" type="text" maxlength="200" autocomplete="off" placeholder="剪藏标题" /></div>
+        <form id="clipForm">
+          <div class="clip-action"><button id="clipButton" class="primary-button" type="submit" disabled title="剪藏为草稿（Ctrl / Command + Enter）"><svg aria-hidden="true"><use href="#i-mark"/></svg><span>剪藏</span><kbd aria-hidden="true">⌘↵</kbd></button></div>
+          <fieldset class="mode-field"><legend>剪藏方式</legend><div id="clipModes" class="clip-modes"><span class="mode-indicator" aria-hidden="true"></span>
+            <label class="mode-option"><input type="radio" name="clipType" value="article" checked /><span><svg aria-hidden="true"><use href="#i-article"/></svg>网页正文<svg class="mode-check" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+            <label class="mode-option"><input type="radio" name="clipType" value="full_page" /><span><svg aria-hidden="true"><use href="#i-page"/></svg>整个网页<svg class="mode-check" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+            <label class="mode-option"><input type="radio" name="clipType" value="simplified" /><span><svg aria-hidden="true"><use href="#i-text"/></svg>纯文字<svg class="mode-check" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+            <label class="mode-option"><input id="selectionMode" type="radio" name="clipType" value="selection" /><span><svg aria-hidden="true"><use href="#i-selection"/></svg>选中内容<svg class="mode-check" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+            <label class="mode-option"><input type="radio" name="clipType" value="bookmark" /><span><svg aria-hidden="true"><use href="#i-link"/></svg>书签<svg class="mode-check" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+            <label class="mode-option"><input type="radio" name="clipType" value="screenshot" /><span><svg aria-hidden="true"><use href="#i-camera"/></svg>屏幕截图<svg class="mode-check" aria-hidden="true"><use href="#i-check"/></svg></span></label>
+          </div><p id="modeHint" class="field-hint">保留正文、图片和原文链接</p></fieldset>
+          <div class="topic-field"><div class="field-heading"><label for="topicTrigger" class="section-label"><svg aria-hidden="true"><use href="#i-folder"/></svg>保存到分类</label><div><button id="refreshTopics" class="icon-button small" type="button" aria-label="刷新分类" title="刷新分类"><svg><use href="#i-refresh"/></svg></button><button id="newTopicToggle" class="text-button" type="button" aria-expanded="false">＋ 新分类</button></div></div>
+            <input id="topicSelect" type="hidden" value="" />
+            <button id="topicTrigger" class="topic-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="topicMenu" disabled><svg aria-hidden="true"><use href="#i-folder"/></svg><span id="topicLabel">正在获取分类…</span><svg class="chevron" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+            <div id="topicMenu" class="topic-menu" popover="manual" role="dialog" aria-label="选择保存分类" hidden><div class="topic-search"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="topicSearch" role="combobox" aria-label="搜索分类" aria-expanded="true" aria-autocomplete="list" aria-controls="topicOptions" autocomplete="off" placeholder="搜索分类" /></div><div id="topicOptions" role="listbox" aria-label="分类"></div><p id="topicEmpty" class="picker-empty" hidden>没有找到分类，试试其他关键词</p></div>
+            <div id="newTopicField" hidden><label for="newTopicName" class="sr-only">新分类名称</label><input id="newTopicName" maxlength="60" placeholder="输入新分类名称" /><p class="field-hint">保存时创建，也可使用已有的同名分类</p></div>
+          </div>
+          <div class="tags-field"><div class="field-heading"><label for="tagInput" class="section-label"><svg aria-hidden="true"><use href="#i-tag"/></svg>标签 <span class="muted">可选</span></label><span id="tagCount" class="tag-count">0 / 3</span></div><input id="tagNames" type="hidden" /><div id="tagEditor" class="tag-editor"><div id="tagChips" class="tag-chips"></div><input id="tagInput" maxlength="123" autocomplete="off" aria-describedby="tagHint tagFeedback" placeholder="添加标签" /></div><p id="tagHint" class="field-hint">回车或逗号成签</p><p id="tagFeedback" class="tag-feedback" role="status" hidden></p><div id="tagSuggestions" class="tag-suggestions" aria-label="已有标签" hidden></div></div>
+
+        </form>
+
+      </section>
+
+      <section id="successPanel" class="panel success-panel" hidden>
+        <div class="success-icon saved-paper"><svg><use href="#i-check"/></svg></div><h2>已经留住了。</h2><p id="successMessage" class="saved-title"></p><p id="successTopic" class="field-hint"></p><button id="openArticleButton" class="primary-button" type="button"><span>在页息中打开</span><svg><use href="#i-arrow"/></svg></button><button id="clipAnotherButton" class="secondary-button" type="button">返回剪藏</button>
+      </section>
+
+      <section id="aboutPanel" class="panel about-panel" hidden><div id="aboutContent" class="cover"></div></section>
+      <div id="errorPanel" class="error-panel" role="alert" hidden><p id="errorMessage"></p><button id="retryButton" class="text-button" type="button" hidden>重新连接</button></div>
+    </main>
+    <footer id="clipFooter" class="clip-footer" hidden><div class="account-footer"><button id="aboutButton" class="icon-button" type="button" aria-label="关于拾页" title="关于拾页"><svg aria-hidden="true"><use href="#i-info"/></svg></button><button id="logoutButton" class="text-button" type="button">退出登录</button></div></footer>
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

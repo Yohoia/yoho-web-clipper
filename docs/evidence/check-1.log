@@ -1,0 +1,9 @@
+PASS: syntax, manifest, online defaults, migration and URL validation
+PASS: extension loads, login gating, real worker authentication, topics and Markdown fidelity
+PASS: failure keeps inputs, reopening restores draft, successful save persists and opens correct URL
+PASS: selection and bookmark save their own previewed content
+PASS: topics failure preserves login and retries; empty topics create a default category
+PASS: closing popup while saving completes in worker and result restores on reopening
+PASS: concurrent saves cannot create duplicate drafts
+PASS: unauthorized session clears, remembered login persists, service switch revokes old session
+ALL CHECKS PASSED (6 isolated mock drafts; no production writes)

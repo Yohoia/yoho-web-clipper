@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Yoho Clipper</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>Yoho Clipper</h1>
+        <p id="connectionStatus">正在连接 PageHush…</p>
+      </div>
+      <button id="settingsToggle" class="ghost-button" type="button" aria-label="设置">设置</button>
+    </header>
+
+    <main>
+      <section id="settingsPanel" class="settings-panel" hidden>
+        <label>
+          API 地址
+          <input id="apiBaseUrl" type="url" placeholder="http://127.0.0.1:8787" />
+        </label>
+        <label>
+          Web 地址
+          <input id="webBaseUrl" type="url" placeholder="http://127.0.0.1:5173" />
+        </label>
+        <button id="saveSettings" class="secondary-button" type="button">保存设置</button>
+      </section>
+
+      <section id="loginPanel" hidden>
+        <form id="loginForm">
+          <label>
+            访问码
+            <input id="accessCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 位访问码" />
+          </label>
+          <label class="checkbox-row">
+            <input id="remember" type="checkbox" />
+            <span>在此设备保持登录 30 天</span>
+          </label>
+          <button id="loginButton" class="primary-button" type="submit">登录 PageHush</button>
+        </form>
+      </section>
+
+      <section id="clipPanel" hidden>
+        <div class="field-grid">
+          <label>
+            分类
+            <select id="topicSelect"></select>
+          </label>
+          <label>
+            新分类名（可选）
+            <input id="newTopicName" maxlength="60" placeholder="留空则使用上方分类" />
+          </label>
+          <label>
+            剪藏类型
+            <select id="clipType">
+              <option value="article">正文文章</option>
+              <option value="selection">选中内容</option>
+              <option value="bookmark">书签</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="meta-preview">
+          <div class="meta-row">
+            <span>标题</span>
+            <strong id="pageTitle">—</strong>
+          </div>
+          <div class="meta-row">
+            <span>来源</span>
+            <strong id="pageSource">—</strong>
+          </div>
+        </div>
+
+        <button id="clipButton" class="primary-button" type="button">剪藏到 PageHush</button>
+        <button id="logoutButton" class="ghost-danger-button" type="button">退出登录</button>
+      </section>
+
+      <section id="successPanel" class="success-panel" hidden>
+        <p id="successMessage">已保存为草稿。</p>
+        <div class="button-row">
+          <button id="openArticleButton" class="primary-button" type="button">打开文章</button>
+          <button id="clipAnotherButton" class="secondary-button" type="button">继续剪藏</button>
+        </div>
+      </section>
+
+      <p id="errorPanel" class="error-panel" hidden></p>
+    </main>
+
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+[
+  {
+    "file": "clip.png",
+    "state": "clip",
+    "size": "1280x900",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "login.png",
+    "state": "login",
+    "size": "1280x900",
+    "zoom": 1,
+    "issues": []
+  }
+]

@@ -1,0 +1,94 @@
+[
+  {
+    "file": "motion-probe",
+    "state": null,
+    "size": "400x600",
+    "zoom": 1,
+    "motion": {
+      "load": {
+        "elements": 2,
+        "loops": 0,
+        "maxMove": 514,
+        "maxSize": 352,
+        "maxOpacity": 1,
+        "top": [
+          {
+            "el": "pre#contentPreview",
+            "move": 514,
+            "size": 352,
+            "opacity": 0.55,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          },
+          {
+            "el": "section#clipPanel.panel.clip-panel",
+            "move": 8,
+            "size": 0.023,
+            "opacity": 1,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          }
+        ]
+      },
+      "steps": {
+        "elements": 2,
+        "loops": 0,
+        "maxMove": 231,
+        "maxSize": 0,
+        "maxOpacity": 0.55,
+        "top": [
+          {
+            "el": "span.mode-indicator",
+            "move": 231,
+            "size": 0,
+            "opacity": 0,
+            "loop": false,
+            "sources": [
+              "transition:transform"
+            ]
+          },
+          {
+            "el": "pre#contentPreview",
+            "move": 4,
+            "size": 0,
+            "opacity": 0.55,
+            "loop": false,
+            "sources": [
+              "waapi"
+            ]
+          }
+        ]
+      },
+      "hero": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "layers": 0
+      },
+      "scroll": {
+        "elements": 0,
+        "loops": 0,
+        "maxMove": 0,
+        "maxSize": 0,
+        "maxOpacity": 0,
+        "top": [],
+        "scrollable": false
+      }
+    },
+    "issues": []
+  },
+  {
+    "file": "page.png",
+    "state": null,
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  }
+]

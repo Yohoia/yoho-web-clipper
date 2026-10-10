@@ -1,0 +1,37 @@
+[
+  {
+    "file": "login.png",
+    "state": "login",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "clip.png",
+    "state": "clip",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "success.png",
+    "state": "success",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "offline.png",
+    "state": "offline",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "empty.png",
+    "state": "empty",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "file": "login.png",
+    "state": "login",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "clip.png",
+    "state": "clip",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "success.png",
+    "state": "success",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "save-error.png",
+    "state": "save-error",
+    "size": "400x600",
+    "zoom": 1,
+    "issues": []
+  }
+]
