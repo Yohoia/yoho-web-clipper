@@ -80,6 +80,9 @@ async function worker(type, values = {}) {
 
 function showPanel(panel) {
   screen = panel;
+  const clipScreen = screen === 'clipPanel';
+  elements.exportMarkdownButton.hidden = !clipScreen;
+  elements.exportZipButton.hidden = !clipScreen;
   updateCopyButton();
   elements.clipFooter.hidden = panel !== 'clipPanel';
   elements.backToClipButton.hidden = panel !== 'aboutPanel';
@@ -212,8 +215,13 @@ function updateSaveButton() {
   const contentReady = !contentLoading && Boolean(pageData);
   const operationBusy = busy || pendingSave || exporting;
   elements.clipButton.disabled = operationBusy || !contentReady || !sessionChecked || !topicsReady;
+  const clipScreen = screen === 'clipPanel';
+  elements.exportMarkdownButton.hidden = !clipScreen;
+  elements.exportZipButton.hidden = !clipScreen;
   elements.exportMarkdownButton.disabled = operationBusy || !contentReady;
   elements.exportZipButton.disabled = operationBusy || !contentReady;
+  elements.exportMarkdownButton.title = exporting ? '正在导出 MD…' : '导出 MD';
+  elements.exportZipButton.title = exporting ? '正在导出 ZIP…' : '导出 ZIP 压缩包';
   elements.logoutButton.disabled = busy || pendingSave;
   elements.aboutButton.disabled = busy || pendingSave;
   elements.refreshTopics.disabled = busy || pendingSave;
@@ -687,10 +695,6 @@ async function exportCurrent(kind) {
   catch (error) { showError(error); return; }
   exporting = true;
   updateSaveButton();
-  const markdownLabel = elements.exportMarkdownButton.textContent;
-  const zipLabel = elements.exportZipButton.textContent;
-  elements.exportMarkdownButton.textContent = kind === 'markdown' ? '正在导出…' : markdownLabel;
-  elements.exportZipButton.textContent = kind === 'zip' ? '正在导出…' : zipLabel;
   try {
     if (kind === 'markdown') await exportMarkdownFile(documentToExport);
     else await exportZipFile(documentToExport);
@@ -698,8 +702,6 @@ async function exportCurrent(kind) {
     showError(new Error('本地导出失败，请重试。'));
   } finally {
     exporting = false;
-    elements.exportMarkdownButton.textContent = markdownLabel;
-    elements.exportZipButton.textContent = zipLabel;
     updateSaveButton();
   }
 }

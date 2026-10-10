@@ -298,6 +298,20 @@ try {
   await popup.locator('#copyLinkText').filter({ hasText: '已复制' }).waitFor();
   assert.equal(await popup.evaluate(() => window.__fallbackText), fixtureUrl);
   assert.equal(await popup.evaluate(() => document.activeElement.id), 'copyLinkButton');
+  const headerButtons = await popup.evaluate(() => {
+    const header = document.querySelector('.app-header').getBoundingClientRect();
+    const ids = ['copyLinkButton', 'exportMarkdownButton', 'exportZipButton'];
+    return ids.map((id) => {
+      const box = document.getElementById(id).getBoundingClientRect();
+      return { id, x: box.x, y: box.y, width: box.width, height: box.height, insideHeader: box.top >= header.top && box.bottom <= header.bottom };
+    });
+  });
+  assert.equal(await popup.locator('.export-actions').count(), 0);
+  assert.equal(await popup.locator('#copyLinkText').evaluate((label) => label.classList.contains('sr-only') && label.getBoundingClientRect().width <= 1), true);
+  assert.deepEqual(headerButtons.map((button) => button.id), ['copyLinkButton', 'exportMarkdownButton', 'exportZipButton']);
+  assert.ok(headerButtons.every((button) => button.insideHeader && button.width === 28 && button.height === 28));
+  assert.ok(headerButtons.slice(1).every((button, index) => button.x > headerButtons[index].x && Math.abs(button.y - headerButtons[index].y) < .5));
+  console.log('PASS: link and local-export actions share the compact header icon row');
   console.log('PASS: action placement, full source-link copy, denied-copy retry and fallback cleanup (platform clipboard mocked)');
 
   await popup.locator('#newTopicToggle').click();
@@ -830,6 +844,8 @@ try {
   assert.equal(await aboutFrame.locator('#aboutPanel #version').textContent(), manifest.version);
   assert.equal(await aboutFrame.evaluate(() => document.activeElement.id), 'backToClipButton');
   assert.equal(await aboutFrame.locator('#copyLinkButton').isVisible(), false);
+  assert.equal(await aboutFrame.locator('#exportMarkdownButton').isVisible(), false);
+  assert.equal(await aboutFrame.locator('#exportZipButton').isVisible(), false);
   assert.equal(await aboutFrame.locator('#aboutPanel .clip-kind').count(), 6);
   const articlesBeforeAboutShortcut = articles.length;
   await aboutSource.keyboard.press('Control+Enter');

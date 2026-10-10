@@ -45,10 +45,11 @@ h1, h2, p { margin: 0; }
 h2 { font-size: 26px; letter-spacing: -.5px; font-weight: 600; }
 .app-header { flex-shrink: 0; height: 48px; padding: 8px var(--content-inset); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 7px; }
-.header-actions { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.header-actions { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .brand-mark { display: block; width: 28px; height: 28px; object-fit: contain; flex-shrink: 0; }
 h1 { font-size: 16px; font-weight: 600; letter-spacing: .5px; }
-.copy-link { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 84px; min-height: 28px; padding: 4px 6px; border: 1px solid transparent; border-radius: 3px; background: transparent; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.copy-link { display: inline-flex; align-items: center; justify-content: center; min-width: 84px; min-height: 28px; padding: 4px 6px; border: 1px solid transparent; border-radius: 3px; background: transparent; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.copy-link.icon-only { width: 28px; min-width: 0; height: 28px; padding: 0; border-radius: 7px; }
 .copy-link svg { width: 16px; height: 16px; }
 .copy-link:hover:not(:disabled), .copy-link[data-state="copied"] { color: var(--green); background: var(--green-tint); }
 .copy-link[data-state="error"], .copy-link[data-state="error"]:hover:not(:disabled) { color: var(--danger); background: #f9ede8; }
@@ -105,10 +106,8 @@ form { display: grid; gap: 8px; }
 #pageTitle:focus { text-overflow: clip; }
 #pageTitle:hover { border-color: var(--line); }
 .page-preview[aria-busy="true"] .site-initial { animation: reading 900ms ease-in-out infinite alternate; }
-.clip-action { position: sticky; top: 0; z-index: 2; display: grid; gap: 6px; padding: 4px 0; background: var(--paper); }
+.clip-action { position: sticky; top: 0; z-index: 2; padding: 4px 0; background: var(--paper); }
 .clip-action .primary-button { width: 100%; }
-.export-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-.export-actions .secondary-button { min-height: 30px; padding: 5px 6px; font-size: 11px; }
 .mode-field { border: 0; padding: 0; margin: 0; min-width: 0; }
 .mode-field legend { margin-bottom: 9px; }
 .clip-modes { --mode-index: 0; --mode-height: 32px; position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0,1fr); background: transparent; }

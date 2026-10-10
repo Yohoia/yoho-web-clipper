@@ -88,3 +88,7 @@
 ## 0.6.0 本地导出
 
 新增 `src/export.js`：MD 导出直接生成 UTF-8 Markdown；ZIP 导出在扩展页内生成标准 Store ZIP，包含 `article.md` 和下载成功的正文图片。图片请求使用 no-referrer，链接改写为 `assets/...` 相对路径，失败时保留原外链。UI 在剪藏主按钮下增加两个本地导出按钮，使用 `downloads` 权限保存文件。隔离扩展检查覆盖导出按钮状态、MD 内容、ZIP 结构、图片相对链接与原始字节大小，记录见 `evidence/local-export-check.log`，未写入线上数据。
+
+## 0.6.1 页头导出图标
+
+将本地导出动作从剪藏主按钮下方移动到页头操作行：复制、MD、ZIP 均为 28px 图标按钮，复制文字仅保留给读屏，导出图标提供 title。`showPanel` 与 `updateSaveButton` 统一控制导出按钮的显示、隐藏和禁用；关于页继续隐藏复制与导出。隔离检查覆盖同一行布局、按钮尺寸、读屏文本、导出流程和关于页隐藏。
