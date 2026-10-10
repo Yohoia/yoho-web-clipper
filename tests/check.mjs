@@ -36,10 +36,17 @@ let failTopics = false;
 let emptyTopics = false;
 let validSession = true;
 let saveDelay = 0;
-const fixture = `<!doctype html><html lang="en"><head><title>A thoughtful reading workflow</title><meta name="author" content="Reader"><meta name="description" content="Keep useful ideas with their original context."></head><body><nav>REMOVE NAVIGATION</nav><article><h1>A thoughtful reading workflow</h1><p>Keep <strong>useful ideas</strong> and a <a href="/original">source link</a>.</p><h2>Reading list</h2><ol start="3"><li>Read slowly<ul><li>Take a note</li><li>Keep context</li></ul></li><li>Return later</li></ol><pre><code>function example() {\n    const spaces = 'a  b';\n\n\n    return spaces;\n}</code></pre><p>Inline <code>a\`b</code> and &lt;img src=x onerror=alert(1)&gt;</p><img src="/cover.png" alt="Reading [notes]"><a href="javascript:alert(1)">Unsafe link</a><div style="display:none">SECRET HIDDEN</div><form><input value="DO NOT SAVE FORM"></form><script>window.fixtureLoaded=true</script><table><tr><th>Name</th><th>Idea</th></tr><tr><td>Read</td><td>Keep | context</td></tr></table></article><footer>REMOVE FOOTER</footer></body></html>`;
+const uploadedAssets = [];
+const remoteImageRequests = [];
+const pngFixture = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMCAO+gv2kAAAAASUVORK5CYII=', 'base64');
+const fixture = `<!doctype html><html lang="en"><head><title>A thoughtful reading workflow</title><meta name="author" content="Reader"><meta name="description" content="Keep useful ideas with their original context."></head><body><nav>REMOVE NAVIGATION</nav><article><h1>A thoughtful reading workflow</h1><p>Keep <strong>useful ideas</strong> and a <a href="/original">source link</a>.</p><h2>Reading list</h2><ol start="3"><li>Read slowly<ul><li>Take a note</li><li>Keep context</li></ul></li><li>Return later</li></ol><pre><code>function example() {\n    const spaces = 'a  b';\n\n\n    return spaces;\n}</code></pre><p>Inline <code>a\`b</code> and &lt;img src=x onerror=alert(1)&gt;</p><img src="/cover.png" alt="Reading [notes]"><img src="/inline.png" alt="Inline notes"><a href="javascript:alert(1)">Unsafe link</a><div style="display:none">SECRET HIDDEN</div><form><input value="DO NOT SAVE FORM"></form><script>window.fixtureLoaded=true</script><table><tr><th>Name</th><th>Idea</th></tr><tr><td>Read</td><td>Keep | context</td></tr></table></article><footer>REMOVE FOOTER</footer></body></html>`;
 const server = createServer(async (req, res) => {
   const path = new URL(req.url, 'http://localhost').pathname;
   if (path === '/fixture' || path.startsWith('/articles/') || path.startsWith('/a/') || path.startsWith('/workspace/')) { res.writeHead(200, { 'Content-Type': 'text/html' }); res.end(fixture); return; }
+  if (path === '/cover.png' || path === '/inline.png') {
+    remoteImageRequests.push({ path, referer: req.headers.referer || null });
+    res.writeHead(200, { 'Content-Type': 'image/png' }); res.end(pngFixture); return;
+  }
   if (!path.startsWith('/v1/')) { res.writeHead(204); res.end(); return; }
   let body = '';
   for await (const chunk of req) body += chunk;
@@ -62,10 +69,16 @@ const server = createServer(async (req, res) => {
   if (path === '/v1/tags') { send([{ id: 'tag-read', name: '阅读' }, { id: 'tag-design', name: '设计灵感' }]); return; }
   if (path === '/v1/assets') {
     assert.match(req.headers['content-type'], /^multipart\/form-data; boundary=/);
-    assert.ok(body.includes('name="kind"') && body.includes('cover'));
-    assert.ok(body.includes('filename="pagehush-screenshot.png"') && body.includes('image/png'));
+    assert.ok(body.includes('name="kind"'));
+    const screenshot = body.includes('filename="pagehush-screenshot.png"');
+    const kind = screenshot ? 'cover' : 'inline_image';
+    assert.ok(body.includes(`name="kind"`) && body.includes(kind));
+    assert.ok(body.includes('image/png'));
     if (failAsset) { send({ error: 'storage_not_configured' }, 503); return; }
-    send({ id: 'capture-asset', status: 'ready', url: '/v1/assets/capture-asset/content' }, 201); return;
+    const id = screenshot ? 'capture-asset' : `inline-asset-${uploadedAssets.length + 1}`;
+    const asset = { id, status: 'ready', kind, size: pngFixture.length, url: `/v1/assets/${id}/content` };
+    uploadedAssets.push(asset);
+    send(asset, 201); return;
   }
   if (path === '/v1/articles') {
     if (saveDelay) await new Promise((resolve) => setTimeout(resolve, saveDelay));
@@ -408,6 +421,17 @@ try {
   assert.deepEqual(articles[0].tagNames, ['阅读', '收藏']);
   assert.match(articles[0].sourceChecksum, /^[0-9a-f]{64}$/);
   assert.equal(articles[0].sourceUrl, fixtureUrl);
+  assert.equal(articles[0].coverAssetId, 'inline-asset-1');
+  assert.equal(articles[0].cover, null);
+  assert.ok(articles[0].content.includes(`![Reading \\[notes\\]](${base}/v1/assets/inline-asset-1/content)`));
+  assert.ok(articles[0].content.includes(`![Inline notes](${base}/v1/assets/inline-asset-2/content)`));
+  assert.ok(!articles[0].content.includes('/cover.png'));
+  assert.ok(!articles[0].content.includes('/inline.png'));
+  assert.deepEqual(remoteImageRequests.slice(-2).map((request) => ({ path: request.path, referer: request.referer })), [
+    { path: '/cover.png', referer: null },
+    { path: '/inline.png', referer: null },
+  ]);
+  console.log('PASS: inline article images upload without a cross-site referrer and replace remote Markdown links');
   await popup.reload(); await visiblePanel(popup, 'successPanel'); assert.equal(articles.length, 1);
   await assertPopupSize(popup);
   await popup.locator('#openArticleButton').click();
@@ -582,7 +606,9 @@ try {
     assert.equal(article.clipType, type);
     if (type === 'full_page') {
       assert.ok(article.content.includes('REMOVE NAVIGATION') && article.content.includes('REMOVE FOOTER'));
-      assert.ok(article.content.includes('Reading list') && article.content.includes('![Reading'));
+      assert.ok(article.content.includes('Reading list'));
+      assert.ok(article.content.includes('![Reading \\[notes\\]]('));
+      assert.ok(article.content.includes(`/v1/assets/inline-asset-2/content`));
     } else {
       assert.ok(article.content.includes('Reading list') && article.content.includes('function example'));
       assert.ok(!article.content.includes('![Reading') && !article.cover);

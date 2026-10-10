@@ -245,3 +245,6 @@ source_checksum
 ### 0.5.4 面板内关于（覆盖上版打开方式）
 
 关于按钮切换 popup 的 aboutPanel，保留原外壳宽高和位置，不发打开新页消息。返回或 Esc 恢复 clipPanel、输入、选择、原滚动位置与关于图标焦点；关于页不触发剪藏快捷键。共享 src/about.js 内容和默认线上地址；popup/about.css 只作用于关于面板，options/settings.* 保留浏览器扩展详情入口。新增静态模块和样式加入 web_accessible_resources，不增加权限。后台不再提供 openAbout 消息。
+### 0.5.5 正文图片归档约定
+
+「网页正文」「整个网页」和「选中内容」保存前会解析 Markdown 中处于代码块外的远程 JPEG / PNG / WebP 图片，使用 no-referrer 下载并上传为页息 `inline_image` 资产，再替换正文链接；正文首图与封面外链一致时复用该资产作为 `coverAssetId`。单张 5MB、最多 30 张、总计 50MB；失败保留原外链，不阻断文字保存。纯文字、书签和截图的既有图片策略不变。

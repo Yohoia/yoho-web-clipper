@@ -80,4 +80,7 @@
 
 固定短地址追加检查通过，记录见 `evidence/short-address-check.log`：模拟 API 返回中文 slug 与 shortId，真实扩展保存、重开并打开 `/a/:shortId`；旧 API 的 UUID 回退地址也通过检查。本次同步修改本机 PageHush 网页、API 与共享编码模块，未部署线上服务。
 
-本轮未实现截图标注、整页、图片上传、查重提示、PDF / Gmail 专用适配。这些不属于本轮登录到保存闭环，保留在 plan.md 后续阶段。
+截图标注、滚动长截图、查重提示、PDF / Gmail 专用适配仍保留在后续阶段；整页剪藏与正文图片归档已在后续版本实现。
+## 0.5.5 正文图片归档
+
+0.5.5 为正文、整页和选区增加图片归档：代码块外的远程 JPEG / PNG / WebP 使用 no-referrer 下载，上传为 `inline_image`，再替换 Markdown 链接；封面与正文同一外链时复用资产。限制为单张 5MB、最多 30 张、总计 50MB；失败保留原外链，不阻断保存。隔离扩展检查覆盖多图上传、封面资产复用、Markdown 替换、no-referrer 请求和既有截图流程，记录见 `evidence/inline-image-archive-check.log`，未写入线上数据。

@@ -3,6 +3,120 @@ import { articleUrl, normalizeBaseUrl, resolveSettings } from './config.js';
 const PREFIX = 'yohoClipper:';
 let saving = false;
 
+const MAX_ARCHIVED_IMAGES = 30;
+const MAX_INLINE_IMAGE_SIZE = 5 * 1024 * 1024;
+const MAX_ARCHIVED_IMAGE_TOTAL_SIZE = 50 * 1024 * 1024;
+const IMAGE_MARKDOWN_PATTERN = /!\[((?:\\.|[^\]])*)\]\(([^)\s]+)(?:\s+(\"(?:[^\"\\]|\\.)*\"))?\)/g;
+const inlineAssetCache = new Map();
+const IMAGE_MIME_EXTENSIONS = new Map([
+  ['image/jpeg', '.jpg'],
+  ['image/png', '.png'],
+  ['image/webp', '.webp'],
+]);
+
+function outsideCodeFence(value, callback) {
+  let fence = null;
+  return value.split('\n').map((line) => {
+    const marker = line.trim().match(/^(`{3,}|~{3,})/);
+    if (marker && (!fence || marker[1].startsWith(fence))) {
+      fence = fence ? null : marker[1];
+      return line;
+    }
+    if (fence) return line;
+    return callback(line);
+  }).join('\n');
+}
+
+function inlineImageUrls(content) {
+  const urls = [];
+  const seen = new Set();
+  outsideCodeFence(content, (line) => {
+    for (const match of line.matchAll(IMAGE_MARKDOWN_PATTERN)) {
+      const url = match[2];
+      if (!url || seen.has(url)) continue;
+      seen.add(url);
+      urls.push(url);
+    }
+  });
+  return urls.slice(0, MAX_ARCHIVED_IMAGES);
+}
+
+function imageFilename(url, mimeType) {
+  const parsed = new URL(url);
+  const raw = decodeURIComponent(parsed.pathname.split('/').at(-1) || 'image');
+  const safe = raw.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^[-.]+|-+$/g, '');
+  const extension = IMAGE_MIME_EXTENSIONS.get(mimeType) || '';
+  if (!safe || !/\.(jpe?g|png|webp)$/i.test(safe)) return `pagehush-image${extension}`;
+  return safe.slice(-100);
+}
+
+async function uploadInlineImage(url, state, kind = 'inline_image', remainingSize = MAX_ARCHIVED_IMAGE_TOTAL_SIZE) {
+  const cacheKey = `${state.settings.apiBaseUrl}|${url}`;
+  if (inlineAssetCache.has(cacheKey)) return inlineAssetCache.get(cacheKey);
+  let response;
+  try {
+    response = await fetch(url, {
+      credentials: 'omit',
+      referrerPolicy: 'no-referrer',
+      signal: AbortSignal.timeout(25_000),
+    });
+  } catch {
+    return null;
+  }
+  if (!response.ok) return null;
+  const mimeType = (response.headers.get('content-type') || '').split(';', 1)[0].trim().toLowerCase();
+  if (!IMAGE_MIME_EXTENSIONS.has(mimeType)) return null;
+  let blob;
+  try { blob = await response.blob(); } catch { return null; }
+  if (!blob.size || blob.size > MAX_INLINE_IMAGE_SIZE || blob.size > remainingSize) return null;
+
+  const form = new FormData();
+  form.append('kind', kind);
+  form.append('file', blob, imageFilename(url, mimeType));
+  try {
+    const asset = await request('/v1/assets', { method: 'POST', body: form }, state);
+    if (!asset?.id || asset.status !== 'ready' || asset.url !== `/v1/assets/${asset.id}/content`) return null;
+    inlineAssetCache.set(cacheKey, asset);
+    return asset;
+  } catch {
+    return null;
+  }
+}
+
+async function archivePayloadImages(payload, state) {
+  if (!['article', 'selection', 'full_page'].includes(payload.clipType)) return payload;
+  const assets = new Map();
+  const archived = new Map();
+  let remainingImageBytes = MAX_ARCHIVED_IMAGE_TOTAL_SIZE;
+
+  for (const url of inlineImageUrls(payload.content)) {
+    let parsed;
+    try { parsed = new URL(url); } catch { continue; }
+    if (!['http:', 'https:'].includes(parsed.protocol)) continue;
+    if (url.startsWith(`${state.settings.apiBaseUrl}/v1/assets/`)) continue;
+    const asset = await uploadInlineImage(url, state, 'inline_image', remainingImageBytes);
+    if (!asset) continue;
+    remainingImageBytes -= asset.size;
+    assets.set(url, asset);
+    archived.set(url, `${state.settings.apiBaseUrl}${asset.url}`);
+  }
+
+  if (!archived.size) return payload;
+  const content = outsideCodeFence(payload.content, (line) =>
+    line.replace(IMAGE_MARKDOWN_PATTERN, (match, alt, url, title = '') => {
+      const replacement = archived.get(url);
+      return replacement ? `![${alt}](${replacement}${title ? ` ${title}` : ''})` : match;
+    }),
+  );
+
+  const coverAsset = payload.cover ? assets.get(payload.cover) : null;
+  return {
+    ...payload,
+    content,
+    ...(coverAsset ? { coverAssetId: coverAsset.id, cover: null } : {}),
+  };
+}
+
 function fail(code, status = 0) {
   return Object.assign(new Error(code), { code, status });
 }
@@ -138,6 +252,7 @@ async function createArticle(message) {
       payload.tagNames.some((name) => typeof name !== 'string' || name.length > 40))) throw fail('invalid_tags');
     job = { status: 'saving', tabId: message.tabId, title: payload.title, startedAt: Date.now() };
     await chrome.storage.local.set({ saveJob: job });
+    payload = await archivePayloadImages(payload, state);
     if (payload.clipType === 'screenshot') payload = await screenshotPayload(message, state);
     const bytes = new TextEncoder().encode(`${payload.sourceUrl || ''}\n${payload.content}`);
     const digest = await crypto.subtle.digest('SHA-256', bytes);
