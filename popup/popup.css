@@ -105,8 +105,10 @@ form { display: grid; gap: 8px; }
 #pageTitle:focus { text-overflow: clip; }
 #pageTitle:hover { border-color: var(--line); }
 .page-preview[aria-busy="true"] .site-initial { animation: reading 900ms ease-in-out infinite alternate; }
-.clip-action { position: sticky; top: 0; z-index: 2; padding: 4px 0; background: var(--paper); }
+.clip-action { position: sticky; top: 0; z-index: 2; display: grid; gap: 6px; padding: 4px 0; background: var(--paper); }
 .clip-action .primary-button { width: 100%; }
+.export-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.export-actions .secondary-button { min-height: 30px; padding: 5px 6px; font-size: 11px; }
 .mode-field { border: 0; padding: 0; margin: 0; min-width: 0; }
 .mode-field legend { margin-bottom: 9px; }
 .clip-modes { --mode-index: 0; --mode-height: 32px; position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0,1fr); background: transparent; }

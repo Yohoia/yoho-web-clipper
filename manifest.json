@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "拾页",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "拾页 PageHush Clipper — 拾起灵感，留住好文章。六种方式剪藏网页，保存到页息 PageHush 草稿。",
   "action": {
     "default_title": "拾页 · 保存到页息 PageHush",
@@ -17,7 +17,8 @@
   "permissions": [
     "activeTab",
     "storage",
-    "scripting"
+    "scripting",
+    "downloads"
   ],
   "host_permissions": [
     "http://*/*",
@@ -51,7 +52,8 @@
         "icons/icon-128.png",
         "src/preferences.js",
         "src/about.js",
-        "src/config.js"
+        "src/config.js",
+        "src/export.js"
       ],
       "matches": [
         "http://*/*",

@@ -1,5 +1,6 @@
 import { DEFAULT_PREFERENCES, resolvePreferences } from '../src/preferences.js';
 import { mountAbout } from '../src/about.js';
+import { exportMarkdownFile, exportZipFile } from '../src/export.js';
 
 const ids = [
   'closePanelButton', 'backToClipButton', 'panelTitle', 'aboutContent', 'copyLinkButton', 'copyLinkIcon', 'copyLinkText', 'copyFeedback',
@@ -9,7 +10,7 @@ const ids = [
   'newTopicName', 'selectionMode', 'modeHint', 'pageTitle', 'pageSource',
   'pageStats', 'siteInitial', 'tagNames', 'tagInput', 'tagChips', 'tagCount', 'tagFeedback', 'tagSuggestions',
   'topicTrigger', 'topicLabel', 'topicMenu', 'topicSearch', 'topicOptions', 'topicEmpty',
-  'pagePreview', 'clipModes', 'clipButton', 'logoutButton', 'successPanel', 'successMessage', 'successTopic',
+  'pagePreview', 'clipModes', 'clipButton', 'exportMarkdownButton', 'exportZipButton', 'logoutButton', 'successPanel', 'successMessage', 'successTopic',
   'openArticleButton', 'clipAnotherButton', 'errorPanel', 'errorMessage', 'retryButton',
 ];
 const elements = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
@@ -56,6 +57,7 @@ let savedArticleUrl = null;
 let screen = 'loadingPanel';
 let busy = false;
 let pendingSave = false;
+let exporting = false;
 let previewVersion = 0;
 let lastTopic = null;
 let retryAction = null;
@@ -207,7 +209,11 @@ function clearError() {
 }
 
 function updateSaveButton() {
-  elements.clipButton.disabled = busy || pendingSave || contentLoading || !sessionChecked || !topicsReady || !pageData;
+  const contentReady = !contentLoading && Boolean(pageData);
+  const operationBusy = busy || pendingSave || exporting;
+  elements.clipButton.disabled = operationBusy || !contentReady || !sessionChecked || !topicsReady;
+  elements.exportMarkdownButton.disabled = operationBusy || !contentReady;
+  elements.exportZipButton.disabled = operationBusy || !contentReady;
   elements.logoutButton.disabled = busy || pendingSave;
   elements.aboutButton.disabled = busy || pendingSave;
   elements.refreshTopics.disabled = busy || pendingSave;
@@ -664,6 +670,40 @@ function sourceHeader(data) {
   return [`> 原文：[${title}](${url})`, ...(meta.length ? [`> 来源：${meta.join(' · ')}`] : [])].join('\n');
 }
 
+function exportDocument() {
+  const title = elements.pageTitle.value.trim();
+  if (!title) { elements.pageTitle.focus(); throw new Error('请填写导出标题。'); }
+  if (!pageData || contentLoading) throw new Error('网页内容尚未读取完成。');
+  const heading = title.replace(/([\\`*_\[\]])/g, '\\$1');
+  const body = [sourceHeader(pageData), pageData.markdown].filter(Boolean).join('\n\n');
+  return { title, markdown: `# ${heading}\n\n${body}`.trim() + '\n' };
+}
+
+async function exportCurrent(kind) {
+  if (elements.exportMarkdownButton.disabled || elements.exportZipButton.disabled) return;
+  clearError();
+  let documentToExport;
+  try { documentToExport = exportDocument(); }
+  catch (error) { showError(error); return; }
+  exporting = true;
+  updateSaveButton();
+  const markdownLabel = elements.exportMarkdownButton.textContent;
+  const zipLabel = elements.exportZipButton.textContent;
+  elements.exportMarkdownButton.textContent = kind === 'markdown' ? '正在导出…' : markdownLabel;
+  elements.exportZipButton.textContent = kind === 'zip' ? '正在导出…' : zipLabel;
+  try {
+    if (kind === 'markdown') await exportMarkdownFile(documentToExport);
+    else await exportZipFile(documentToExport);
+  } catch (error) {
+    showError(new Error('本地导出失败，请重试。'));
+  } finally {
+    exporting = false;
+    elements.exportMarkdownButton.textContent = markdownLabel;
+    elements.exportZipButton.textContent = zipLabel;
+    updateSaveButton();
+  }
+}
+
 function buildPayload() {
   const title = elements.pageTitle.value.trim();
   if (!title) { elements.pageTitle.focus(); throw new Error('请填写剪藏标题。'); }
@@ -799,6 +839,9 @@ elements.clipForm.addEventListener('submit', async (event) => {
   }
 });
 
+elements.exportMarkdownButton.addEventListener('click', () => exportCurrent('markdown'));
+elements.exportZipButton.addEventListener('click', () => exportCurrent('zip'));
+
 document.querySelectorAll('input[name="clipType"]').forEach((input) => {
   input.addEventListener('change', async () => {
     clearError();
@@ -806,7 +849,7 @@ document.querySelectorAll('input[name="clipType"]').forEach((input) => {
     await Promise.allSettled([persistInputs(), refreshing, chrome.storage.local.set({ lastClipType: selectedMode() })]);
   });
 });
-elements.pageTitle.addEventListener('input', () => { elements.pageTitle.title = elements.pageTitle.value; });
+elements.pageTitle.addEventListener('input', () => { elements.pageTitle.title = elements.pageTitle.value; updateSaveButton(); });
 elements.pageTitle.addEventListener('blur', () => { elements.pageTitle.scrollLeft = 0; });
 for (const id of ['pageTitle', 'newTopicName']) elements[id].addEventListener('input', persistInputs);
 elements.topicTrigger.addEventListener('click', openTopicMenu);

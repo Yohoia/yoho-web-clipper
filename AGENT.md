@@ -248,3 +248,7 @@ source_checksum
 ### 0.5.5 正文图片归档约定
 
 「网页正文」「整个网页」和「选中内容」保存前会解析 Markdown 中处于代码块外的远程 JPEG / PNG / WebP 图片，使用 no-referrer 下载并上传为页息 `inline_image` 资产，再替换正文链接；正文首图与封面外链一致时复用该资产作为 `coverAssetId`。单张 5MB、最多 30 张、总计 50MB；失败保留原外链，不阻断文字保存。纯文字、书签和截图的既有图片策略不变。
+
+### 0.6.0 本地导出约定
+
+剪藏主按钮下方提供「导出 MD」和「导出压缩包」。导出内容来自当前已读取的 `pageData`，先写入标题与来源头，再写入当前剪藏方式正文。MD 直接通过 `chrome.downloads` 保存；ZIP 使用无压缩标准格式，包含 `article.md` 与 `assets/image-001.jpg|png|webp` 等文件。可下载的 JPEG / PNG / WebP 使用 no-referrer 获取并改写为相对链接；单张 5MB、最多 30 张、总计 50MB，失败保留原外链。导出不写入页息，也不依赖分类、标签或存储配置。

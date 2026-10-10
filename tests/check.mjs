@@ -19,8 +19,9 @@ const manifest = JSON.parse(await readFile(resolve(root, 'manifest.json'), 'utf8
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.name, '拾页');
 assert.deepEqual(manifest.options_ui, { page: 'options/settings.html', open_in_tab: true });
+assert.deepEqual(manifest.permissions, ['activeTab', 'storage', 'scripting', 'downloads']);
 assert.deepEqual(resolvePreferences({ defaultClipType: 'invalid', topicStrategy: 'unknown', afterClip: 'destroy', reduceMotion: 'yes' }), DEFAULT_PREFERENCES);
-for (const file of ['src/background.js', 'src/content.js', 'src/config.js', 'src/panel.js', 'popup/popup.js', 'tests/panel-preview.js', 'options/settings.js', 'src/preferences.js', 'src/about.js']) execFileSync(process.execPath, ['--check', resolve(root, file)]);
+for (const file of ['src/background.js', 'src/content.js', 'src/config.js', 'src/panel.js', 'src/export.js', 'popup/popup.js', 'tests/panel-preview.js', 'options/settings.js', 'src/preferences.js', 'src/about.js']) execFileSync(process.execPath, ['--check', resolve(root, file)]);
 assert.equal(resolveSettings({ apiBaseUrl: 'http://127.0.0.1:8787', webBaseUrl: 'http://127.0.0.1:5173' }).apiBaseUrl, DEFAULT_SETTINGS.apiBaseUrl);
 assert.equal(resolveSettings({ version: 2, apiBaseUrl: 'http://127.0.0.1:8787', webBaseUrl: 'http://127.0.0.1:5173' }).apiBaseUrl, 'http://127.0.0.1:8787');
 for (const url of ['javascript:alert(1)', 'https://name:password@example.com', 'http://example.com', 'https://example.com/?token=secret']) assert.throws(() => normalizeBaseUrl(url));
@@ -432,6 +433,7 @@ try {
     { path: '/inline.png', referer: null },
   ]);
   console.log('PASS: inline article images upload without a cross-site referrer and replace remote Markdown links');
+
   await popup.reload(); await visiblePanel(popup, 'successPanel'); assert.equal(articles.length, 1);
   await assertPopupSize(popup);
   await popup.locator('#openArticleButton').click();
@@ -440,8 +442,62 @@ try {
   const savedState = await worker.evaluate(async () => chrome.storage.local.get('saveJob'));
   assert.equal(savedState.saveJob.article.shortId, articles[0].shortId);
   console.log('PASS: failure keeps inputs, reopening restores draft, successful save persists and opens correct URL');
+  await popup.locator('#clipAnotherButton').click();
+  await wait(popup, () => !document.getElementById('clipButton').disabled);
+  assert.equal(await popup.locator('#exportMarkdownButton').isDisabled(), false);
+  assert.equal(await popup.locator('#exportZipButton').isDisabled(), false);
+  await popup.evaluate(() => {
+    globalThis.__exportDownloads = [];
+    chrome.downloads.download = async (options) => {
+      const response = await fetch(options.url);
+      const blob = new Blob([await response.arrayBuffer()], { type: response.headers.get('content-type') || 'application/octet-stream' });
+      let files = [];
+      if (options.filename.endsWith('.zip')) {
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        const view = new DataView(bytes.buffer);
+        let end = bytes.length - 22;
+        while (end >= 0 && view.getUint32(end, true) !== 0x06054b50) end -= 1;
+        if (end < 0) throw new Error('test zip end not found');
+        const count = view.getUint16(end + 10, true);
+        let pointer = view.getUint32(end + 16, true);
+        for (let index = 0; index < count; index += 1) {
+          const nameLength = view.getUint16(pointer + 28, true);
+          const extraLength = view.getUint16(pointer + 30, true);
+          const commentLength = view.getUint16(pointer + 32, true);
+          const localOffset = view.getUint32(pointer + 42, true);
+          const localNameLength = view.getUint16(localOffset + 26, true);
+          const localExtraLength = view.getUint16(localOffset + 28, true);
+          const size = view.getUint32(localOffset + 22, true);
+          const dataStart = localOffset + 30 + localNameLength + localExtraLength;
+          const name = new TextDecoder().decode(bytes.slice(pointer + 46, pointer + 46 + nameLength));
+          files.push({ name, size, text: name.endsWith('.md') ? new TextDecoder().decode(bytes.slice(dataStart, dataStart + size)) : null });
+          pointer += 46 + nameLength + extraLength + commentLength;
+        }
+      } else files = [{ name: options.filename, size: blob.size, text: await blob.text() }];
+      globalThis.__exportDownloads.push({ filename: options.filename, type: blob.type, files });
+      return globalThis.__exportDownloads.length;
+    };
+  });
+  await popup.locator('#exportMarkdownButton').click();
+  await popup.waitForFunction(() => globalThis.__exportDownloads?.length === 1);
+  await popup.locator('#exportZipButton').click();
+  await popup.waitForFunction(() => globalThis.__exportDownloads?.length === 2);
+  const exports = await popup.evaluate(() => globalThis.__exportDownloads);
+  assert.match(exports[0].filename, /^A thoughtful reading workflow.md$/);
+  assert.equal(exports[0].type, 'text/markdown;charset=utf-8');
+  assert.ok(exports[0].files[0].text.includes('# A thoughtful reading workflow'));
+  assert.ok(exports[0].files[0].text.includes('| Name | Idea |'));
+  assert.ok(exports[0].files[0].text.includes('![Reading \\[notes\\]]('));
+  assert.match(exports[1].filename, /^A thoughtful reading workflow.zip$/);
+  assert.equal(exports[1].type, 'application/zip');
+  assert.deepEqual(exports[1].files.map((file) => file.name), ['article.md', 'assets/image-001.png', 'assets/image-002.png']);
+  assert.ok(exports[1].files[0].text.includes('![Reading \\[notes\\]](assets/image-001.png)'));
+  assert.ok(exports[1].files[0].text.includes('![Inline notes](assets/image-002.png)'));
+  assert.equal(exports[1].files[1].size, pngFixture.length);
+  assert.equal(exports[1].files[2].size, pngFixture.length);
+  console.log('PASS: local Markdown and image-bundle exports download valid content');
 
-  await popup.bringToFront(); await popup.locator('#clipAnotherButton').click();
+  await popup.bringToFront();
   await wait(popup, () => !document.getElementById('clipButton').disabled);
   await popup.locator('#selectionMode').check();
   await wait(popup, () => !document.getElementById('clipButton').disabled);

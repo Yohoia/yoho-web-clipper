@@ -1,0 +1,24 @@
+PASS: syntax, manifest, online defaults, migration and URL validation
+PASS: inline about stays in the same surface; browser options entry remains read-only with accurate info and unchanged storage
+PASS: compact vertical six-mode list, single checkmark and keyboard selection
+PASS: six-mode switches preserve layout and scroll across every async refresh frame
+PASS: action placement, full source-link copy, denied-copy retry and fallback cleanup (platform clipboard mocked)
+PASS: six-digit typing, paste, navigation, invalid-code reset, logo and stable 340x600 sizing
+PASS: extension loads, login gating, real worker authentication, topics and Markdown fidelity
+PASS: single-line title, ellipsis at rest and complete editable value
+PASS: custom picker search, keyboard, empty results; tag suggestions, chips, limits and draft restoration
+PASS: three-tag limit, pending/bulk-input save guard, preserved legacy drafts and worker validation
+PASS: inline article images upload without a cross-site referrer and replace remote Markdown links
+PASS: failure keeps inputs, reopening restores draft, successful save persists and opens correct URL
+PASS: local Markdown and image-bundle exports download valid content
+PASS: selection and bookmark save their extracted content
+PASS: topics failure preserves login and retries; empty topics create a default category
+PASS: closing popup while saving completes in worker and result restores on reopening
+PASS: concurrent saves cannot create duplicate drafts
+PASS: no connection settings, sliding clip selector, keyboard controls and reduced-motion fallback
+PASS: unauthorized session clears, remembered login persists, service switch revokes old session
+PASS: whole page and text extraction, panel-free screenshot, multipart asset upload, failure recovery and source-tab checks
+PASS: toolbar panel, 12px margins, full-height resize, narrow viewport, source-tab binding, close/Escape/toggle and draft recovery
+PASS: defaults on new pages, existing-draft precedence, recent mode, selection fallback, reduced motion and one-shot open/auto-close after save
+PASS: real iframe about opens inline without new tabs or resize; return/Escape preserve fields, scroll and focus; close works
+ALL CHECKS PASSED (11 isolated mock drafts; no production writes)

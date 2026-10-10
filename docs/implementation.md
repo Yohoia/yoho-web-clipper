@@ -84,3 +84,7 @@
 ## 0.5.5 正文图片归档
 
 0.5.5 为正文、整页和选区增加图片归档：代码块外的远程 JPEG / PNG / WebP 使用 no-referrer 下载，上传为 `inline_image`，再替换 Markdown 链接；封面与正文同一外链时复用资产。限制为单张 5MB、最多 30 张、总计 50MB；失败保留原外链，不阻断保存。隔离扩展检查覆盖多图上传、封面资产复用、Markdown 替换、no-referrer 请求和既有截图流程，记录见 `evidence/inline-image-archive-check.log`，未写入线上数据。
+
+## 0.6.0 本地导出
+
+新增 `src/export.js`：MD 导出直接生成 UTF-8 Markdown；ZIP 导出在扩展页内生成标准 Store ZIP，包含 `article.md` 和下载成功的正文图片。图片请求使用 no-referrer，链接改写为 `assets/...` 相对路径，失败时保留原外链。UI 在剪藏主按钮下增加两个本地导出按钮，使用 `downloads` 权限保存文件。隔离扩展检查覆盖导出按钮状态、MD 内容、ZIP 结构、图片相对链接与原始字节大小，记录见 `evidence/local-export-check.log`，未写入线上数据。
